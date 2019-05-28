@@ -11,5 +11,5 @@ void main()
 	if (Texture < 0){
 		discard;
 	}
-	FragColor = texture(textures, vec3(TexCoord, Texture)) * (1.0 - fog) + vec3(1.0, 1.0, 1.0, 1.0) * fog;
+	FragColor = texture(textures, vec3(TexCoord, Texture)) * fog + vec4(1.0, 1.0, 1.0, 1.0) * (1.0 - fog);
 }

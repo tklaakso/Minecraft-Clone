@@ -1,5 +1,5 @@
+#include <glad/glad.h>
 #include "Player.h"
-#include <GLFW/glfw3.h>
 #include <iostream>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -12,6 +12,7 @@
 #include "Math.h"
 #include "World.h"
 #include "Input.h"
+#include <GLFW/glfw3.h>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ int main() {
 	Player* player = new Player(window);
 
 	Shader* shader = new Shader("VertexShader.glsl", "FragmentShader.glsl");
+	shader->use();
 	shader->setFloat("fogStart", 10.0f);
 	shader->setFloat("fogEnd", 100.0f);
 
@@ -107,7 +109,7 @@ int main() {
 
 		view = player->getView();
 
-		glClearColor(0.0f, 1.0f, 1.0f, 1.0f);
+		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		shader->setMat4("view", view);
 		shader->setMat4("projection", projection);

@@ -17,11 +17,10 @@ uniform float fogEnd;
 
 void main()
 {
-	vec3 pos = projection * view * vec4(aPos + aOffset, 1.0);
-	gl_Position = pos;
+	gl_Position = projection * view * vec4(aPos + aOffset, 1.0);
 	TexCoord = vec2(aTexCoord.x, aTexCoord.y);
 	Texture = aTexture;
-	float dist = length(pos.xyz - playerPosition);
+	float dist = length((aPos + aOffset) - playerPosition);
 	float fogValue = clamp((fogEnd - dist) / (fogEnd - fogStart), 0.0, 1.0);
 	fog = fogValue;
 }
