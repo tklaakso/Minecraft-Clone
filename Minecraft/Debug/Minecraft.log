@@ -1,2 +1,13 @@
-﻿  main.cpp
+﻿  Player.cpp
+c:\users\troy\source\repos\minecraft\minecraft\player.cpp(41): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\player.cpp(42): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+  World.cpp
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(147): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(167): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(207): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(241): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(256): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(265): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
+  Generating Code...
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

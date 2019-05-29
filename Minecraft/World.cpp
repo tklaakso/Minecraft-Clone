@@ -9,6 +9,7 @@ World::World()
 		VAOs[i] = vao;
 	}
 	generator = new WorldGenerator();
+	renderDistance = 8;
 }
 
 Chunk* World::findChunkWithCoords(ChunkCoords* coords, int l, int r) {
@@ -168,6 +169,39 @@ void World::updateChunkVAOs() {
 	}
 }
 
+bool World:: chunkExists(int x, int y) {
+	ChunkCoords coords(x, y, 0, 0);
+	return findChunkWithCoords(&coords, 0, chunks.size() - 1) != NULL;
+}
+
+void World::updateLoadedChunks() {
+	glm::vec2 playerChunkPos((float)playerChunkX, float(playerChunkY));
+	for (int i = chunks.size() - 1; i >= 0; i--) {
+		if (glm::length(glm::vec2((float)chunks[i]->x, (float)chunks[i]->y) - playerChunkPos) > renderDistance) {
+			deleteChunk(chunks[i]->x, chunks[i]->y);
+		}
+	}
+	for (int x = (int)playerChunkPos.x - renderDistance; x < (int)playerChunkPos.x + renderDistance; x++) {
+		for (int y = (int)playerChunkPos.y - renderDistance; y < (int)playerChunkPos.y + renderDistance; y++) {
+			if (glm::sqrt(x * x + y * y) <= renderDistance && !chunkExists(x, y)) {
+				makeChunk(x, y);
+			}
+		}
+	}
+}
+
+void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
+	bool update = false;
+	if (chunkX != playerChunkX || chunkY != playerChunkY) {
+		update = true;
+	}
+	playerChunkX = chunkX;
+	playerChunkY = chunkY;
+	if (update) {
+		updateLoadedChunks();
+	}
+}
+
 void World::render() {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
 	for (int i = 0; i < chunks.size(); i++) {
@@ -225,10 +259,15 @@ void World::updateViewFrustum(ViewFrustum* frustum) {
 }
 
 void World::deleteChunk(int x, int y) {
-	ChunkCoords coords(x, y, 0, 0);
+  ChunkCoords coords(x, y, 0, 0);
 	Chunk* chunk = findChunkWithCoords(&coords, 0, chunks.size() - 1);
 	if (chunk != NULL) {
-		std::remove(chunks.begin(), chunks.end(), chunk);
+		for (int i = 0; i < chunks.size(); i++) {
+			if (chunks[i] == chunk) {
+				chunks.erase(chunks.begin() + i);
+				break;
+			}
+		}
 		freeVAOs.push(chunk->vaoIndex);
 		delete chunk;
 		ChunkCoords leftCoords(x - 1, y, 0, 0);

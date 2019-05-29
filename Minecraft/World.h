@@ -21,7 +21,12 @@ public:
 	void updateChunkVAOs();
 	void makeChunk(int x, int y);
 	void deleteChunk(int x, int y);
+	void updatePlayerChunkPosition(int chunkX, int chunkY);
+	bool chunkExists(int x, int y);
+	void updateLoadedChunks();
+	int renderDistance;
 private:
+	int playerChunkX, playerChunkY;
 	Chunk* findChunkWithCoords(ChunkCoords* coords, int l, int r);
 	WorldGenerator* generator;
 	static ChunkCoords blockToChunkCoords(int bx, int bz);

@@ -35,22 +35,22 @@ int main() {
 
 	ViewFrustum* frustum = new ViewFrustum();
 
-	Player* player = new Player(window);
-
 	Shader* shader = new Shader("VertexShader.glsl", "FragmentShader.glsl");
 	shader->use();
 	shader->setFloat("fogStart", 10.0f);
-	shader->setFloat("fogEnd", 100.0f);
+	shader->setFloat("fogEnd", 150.0f);
 
 	Block::initialize(shader);
 	Input::initialize();
 
 	World* world = new World();
-	for (int x = 0; x < 16; x++) {
-		for (int y = 0; y < 16; y++) {
+	for (int x = -3; x <= 3; x++) {
+		for (int y = -3; y <= 3; y++) {
 			world->makeChunk(x, y);
 		}
 	}
+
+	Player* player = new Player(window, world);
 
 	/*double start = glfwGetTime();
 	for (int x = 0; x < 64; x++) {

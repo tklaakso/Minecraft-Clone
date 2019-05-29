@@ -1,9 +1,10 @@
 #include "Player.h"
 
-Player::Player(GLFWwindow* window)
+Player::Player(GLFWwindow* window, World* world)
 {
 	cam = new Camera();
 	this->window = window;
+	this->world = world;
 	mouseX = mouseY = 0;
 }
 
@@ -44,7 +45,9 @@ void Player::update(Shader* shader, double deltaTime) {
 		Quaternion rotY = Quaternion::angleAxis(glm::vec3(0.0f, 0.0f, 1.0f), mouseY * MOUSE_SENSITIVITY);
 		direction = rotX * rotY;
 	}
-	shader->setVec3("playerPosition", cam->getPosition());
+	glm::vec3 position = cam->getPosition();
+	world->updatePlayerChunkPosition((int)(position.x / CHUNK_WIDTH), (int)(position.z / CHUNK_WIDTH));
+	shader->setVec3("playerPosition", position);
 }
 
 glm::mat4 Player::getView() {

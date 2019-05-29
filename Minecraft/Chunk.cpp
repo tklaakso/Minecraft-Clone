@@ -359,7 +359,7 @@ void Chunk::render() {
 Chunk::~Chunk()
 {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
-		if (blocks[i] != NULL) {
+  	if (blocks[i] != NULL) {
 			if (blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT] != NULL) {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT]->neighbors[BLOCK_NEIGHBOR_RIGHT] = NULL;
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT]->updateNeighbors();
