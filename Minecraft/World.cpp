@@ -9,7 +9,7 @@ World::World()
 		VAOs[i] = vao;
 	}
 	generator = new WorldGenerator();
-	renderDistance = 8;
+	renderDistance = 2;
 }
 
 Chunk* World::findChunkWithCoords(ChunkCoords* coords, int l, int r) {
@@ -183,7 +183,9 @@ void World::updateLoadedChunks() {
 	}
 	for (int x = (int)playerChunkPos.x - renderDistance; x < (int)playerChunkPos.x + renderDistance; x++) {
 		for (int y = (int)playerChunkPos.y - renderDistance; y < (int)playerChunkPos.y + renderDistance; y++) {
-			if (glm::sqrt(x * x + y * y) <= renderDistance && !chunkExists(x, y)) {
+			int localX = x - (int)playerChunkPos.x;
+			int localY = y - (int)playerChunkPos.y;
+			if (glm::sqrt(localX * localX + localY * localY) <= renderDistance && !chunkExists(x, y)) {
 				makeChunk(x, y);
 			}
 		}
