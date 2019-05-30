@@ -62,6 +62,9 @@ void ChunkThread::run() {
 				chunkMutex->lock();
 				cm->chunks.push_back(c);
 				chunkMutex->unlock();
+				createDeleteMutex.lock();
+				toCreate.erase(toCreate.begin());
+				createDeleteMutex.unlock();
 				continue;
 			}
 			bool shouldContinue = false;

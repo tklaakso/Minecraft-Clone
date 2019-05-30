@@ -305,8 +305,7 @@ Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
 }
 
 void Chunk::updateVAO() {
-	vao->updateTranslationData(translations, numBlocksRendered);
-	vao->updateTextureData(textures, numBlocksRendered);
+	shouldUpdateVAO = true;
 }
 
 int Chunk::compare(Chunk* other) {
@@ -350,6 +349,11 @@ void Chunk::updateViewFrustum(ViewFrustum* frustum) {
 }
 
 void Chunk::render() {
+	if (shouldUpdateVAO) {
+		vao->updateTranslationData(translations, numBlocksRendered);
+		vao->updateTextureData(textures, numBlocksRendered);
+		shouldUpdateVAO = false;
+	}
 	if (insideViewFrustum) {
 		vao->bind();
 		glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, numBlocksRendered);

@@ -1,2 +1,7 @@
-﻿  main.cpp
+﻿  World.cpp
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(128): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(148): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(190): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(241): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(250): warning C4018: '<': signed/unsigned mismatch
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

@@ -32,6 +32,7 @@ public:
 	~Chunk();
 private:
 	bool insideViewFrustum;
+	bool shouldUpdateVAO;
 	void swapBlockIndices(Block* b1, int index1, Block* b2, int index2);
 	Block* blockWithTranslationIndex(int translationIndex);
 	int numBlocks;

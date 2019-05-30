@@ -159,7 +159,7 @@ void World::updateLoadedChunks() {
 	glm::vec2 playerChunkPos((float)playerChunkX, float(playerChunkY));
 	for (int i = cm->chunks.size() - 1; i >= 0; i--) {
 		if (glm::length(glm::vec2((float)cm->chunks[i]->x, (float)cm->chunks[i]->y) - playerChunkPos) > renderDistance) {
-			deleteChunk(cm->chunks[i]->x, cm->chunks[i]->y);
+			//deleteChunk(cm->chunks[i]->x, cm->chunks[i]->y);
 		}
 	}
 	for (int x = (int)playerChunkPos.x - renderDistance; x < (int)playerChunkPos.x + renderDistance; x++) {
@@ -167,7 +167,7 @@ void World::updateLoadedChunks() {
 			int localX = x - (int)playerChunkPos.x;
 			int localY = y - (int)playerChunkPos.y;
 			if (glm::sqrt(localX * localX + localY * localY) <= renderDistance && !chunkExists(x, y)) {
-				makeChunk(x, y);
+				//makeChunk(x, y);
 			}
 		}
 	}
