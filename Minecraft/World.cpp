@@ -3,28 +3,9 @@
 
 World::World()
 {
-	VAOs = (ChunkVAO**)malloc(sizeof(ChunkVAO*) * NUM_CHUNK_VAOS);
-	for (int i = 0; i < NUM_CHUNK_VAOS; i++) {
-		ChunkVAO* vao = new ChunkVAO();
-		VAOs[i] = vao;
-	}
-	generator = new WorldGenerator();
+	cm = new ChunkManager();
+	pool = new ChunkThreadPool(cm, 1);
 	renderDistance = 2;
-}
-
-Chunk* World::findChunkWithCoords(ChunkCoords* coords, int l, int r) {
-	if (r >= l) {
-		int mid = l + (r - l) / 2;
-		int cmp = chunks[mid]->compare(coords);
-		if (cmp == 0) {
-			return chunks[mid];
-		}
-		if (cmp > 0) {
-			return findChunkWithCoords(coords, l, mid - 1);
-		}
-		return findChunkWithCoords(coords, mid + 1, r);
-	}
-	return NULL;
 }
 
 Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
@@ -32,7 +13,7 @@ Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
 		return suspect->getBlock(x, y, z);
 	}
 	ChunkCoords coords = blockToChunkCoords(x, z);
-	Chunk* chunk = findChunkWithCoords(&coords, 0, chunks.size() - 1);
+	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
 	if (chunk == NULL) {
 		return NULL;
 	}
@@ -47,7 +28,7 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
-		c = findChunkWithCoords(&coords, 0, chunks.size() - 1);
+		c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
 	}
 	if (c != NULL) {
 		c->textures[block->translationIndex] = block->shouldRender ? block->type : -1;
@@ -56,7 +37,7 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 
 void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorderNeighbors) {
 	ChunkCoords coords = blockToChunkCoords(x, z);
-	Chunk* chunk = findChunkWithCoords(&coords, 0, chunks.size() - 1);
+	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
 	if (chunk != NULL) {
 		chunk->setBlock(x, y, z, block, update);
 		Block* left = getBlock(x - 1, y, z, chunk);
@@ -144,8 +125,8 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 }
 
 void World::reorderBlocks() {
-	for (int i = 0; i < chunks.size(); i++) {
-		chunks[i]->reorderBlocks();
+	for (int i = 0; i < cm->chunks.size(); i++) {
+		cm->chunks[i]->reorderBlocks();
 	}
 }
 
@@ -157,28 +138,28 @@ void World::reorderBlock(Block* block, Chunk* suspect) {
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
-		Chunk* c = findChunkWithCoords(&coords, 0, chunks.size() - 1);
+		Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
 		c->reorderBlock(block);
 		c->updateVAO();
 	}
 }
 
 void World::updateChunkVAOs() {
-	for (int i = 0; i < chunks.size(); i++) {
-		chunks[i]->updateVAO();
+	for (int i = 0; i < cm->chunks.size(); i++) {
+		cm->chunks[i]->updateVAO();
 	}
 }
 
 bool World:: chunkExists(int x, int y) {
 	ChunkCoords coords(x, y, 0, 0);
-	return findChunkWithCoords(&coords, 0, chunks.size() - 1) != NULL;
+	return findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1) != NULL;
 }
 
 void World::updateLoadedChunks() {
 	glm::vec2 playerChunkPos((float)playerChunkX, float(playerChunkY));
-	for (int i = chunks.size() - 1; i >= 0; i--) {
-		if (glm::length(glm::vec2((float)chunks[i]->x, (float)chunks[i]->y) - playerChunkPos) > renderDistance) {
-			deleteChunk(chunks[i]->x, chunks[i]->y);
+	for (int i = cm->chunks.size() - 1; i >= 0; i--) {
+		if (glm::length(glm::vec2((float)cm->chunks[i]->x, (float)cm->chunks[i]->y) - playerChunkPos) > renderDistance) {
+			deleteChunk(cm->chunks[i]->x, cm->chunks[i]->y);
 		}
 	}
 	for (int x = (int)playerChunkPos.x - renderDistance; x < (int)playerChunkPos.x + renderDistance; x++) {
@@ -206,23 +187,23 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 
 void World::render() {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
-	for (int i = 0; i < chunks.size(); i++) {
-		chunks[i]->render();
+	for (int i = 0; i < cm->chunks.size(); i++) {
+		cm->chunks[i]->render();
 	}
 }
 
 void World::makeChunk(int x, int y) {
-	ChunkVAO* vao;
+	/*ChunkVAO* vao;
 	int vaoIndex;
-	if (!freeVAOs.empty()) {
-		vaoIndex = freeVAOs.front();
-		vao = VAOs[vaoIndex];
-		freeVAOs.pop();
+	if (!cm->freeVAOs.empty()) {
+		vaoIndex = cm->freeVAOs.front();
+		vao = cm->VAOs[vaoIndex];
+		cm->freeVAOs.pop();
 	}
 	else {
-		vaoIndex = numUsedVAOs;
-		vao = VAOs[vaoIndex];
-		numUsedVAOs++;
+		vaoIndex = cm->numUsedVAOs;
+		vao = cm->VAOs[vaoIndex];
+		cm->numUsedVAOs++;
 	}
 	Chunk* c = new Chunk(x, y, vao, vaoIndex);
 	Chunk** neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
@@ -230,56 +211,58 @@ void World::makeChunk(int x, int y) {
 	ChunkCoords right(c->x + 1, c->y, 0, 0);
 	ChunkCoords front(c->x, c->y - 1, 0, 0);
 	ChunkCoords back(c->x, c->y + 1, 0, 0);
-	neighbors[CHUNK_NEIGHBOR_LEFT] = findChunkWithCoords(&left, 0, chunks.size() - 1);
-	neighbors[CHUNK_NEIGHBOR_RIGHT] = findChunkWithCoords(&right, 0, chunks.size() - 1);
-	neighbors[CHUNK_NEIGHBOR_FRONT] = findChunkWithCoords(&front, 0, chunks.size() - 1);
-	neighbors[CHUNK_NEIGHBOR_BACK] = findChunkWithCoords(&back, 0, chunks.size() - 1);
-	c->generate(generator, neighbors);
+	neighbors[CHUNK_NEIGHBOR_LEFT] = findChunkWithCoords(cm->chunks, &left, 0, cm->chunks.size() - 1);
+	neighbors[CHUNK_NEIGHBOR_RIGHT] = findChunkWithCoords(cm->chunks, &right, 0, cm->chunks.size() - 1);
+	neighbors[CHUNK_NEIGHBOR_FRONT] = findChunkWithCoords(cm->chunks, &front, 0, cm->chunks.size() - 1);
+	neighbors[CHUNK_NEIGHBOR_BACK] = findChunkWithCoords(cm->chunks, &back, 0, cm->chunks.size() - 1);
+	c->generate(cm->generator, neighbors);
 	free(neighbors);
-	if (chunks.size() == 0) {
-		chunks.push_back(c);
+	if (cm->chunks.size() == 0) {
+		cm->chunks.push_back(c);
 		return;
 	}
-	for (int i = 0; i < chunks.size(); i++) {
-		int cmp = chunks[i]->compare(c);
+	for (int i = 0; i < cm->chunks.size(); i++) {
+		int cmp = cm->chunks[i]->compare(c);
 		if (cmp == 0) {
 			std::cout << "Error: tried to create existing chunk" << std::endl;
 			return;
 		}
 		if (cmp > 0) {
-			chunks.insert(chunks.begin() + i, c);
+			cm->chunks.insert(cm->chunks.begin() + i, c);
 			return;
 		}
 	}
-	chunks.push_back(c);
+	cm->chunks.push_back(c);*/
+	ChunkCoords coords(x, y, 0, 0);
+	pool->createChunk(coords);
 }
 
 void World::updateViewFrustum(ViewFrustum* frustum) {
-	for (int i = 0; i < chunks.size(); i++) {
-		chunks[i]->updateViewFrustum(frustum);
+	for (int i = 0; i < cm->chunks.size(); i++) {
+		cm->chunks[i]->updateViewFrustum(frustum);
 	}
 }
 
 void World::deleteChunk(int x, int y) {
   ChunkCoords coords(x, y, 0, 0);
-	Chunk* chunk = findChunkWithCoords(&coords, 0, chunks.size() - 1);
+	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
 	if (chunk != NULL) {
-		for (int i = 0; i < chunks.size(); i++) {
-			if (chunks[i] == chunk) {
-				chunks.erase(chunks.begin() + i);
+		for (int i = 0; i < cm->chunks.size(); i++) {
+			if (cm->chunks[i] == chunk) {
+				cm->chunks.erase(cm->chunks.begin() + i);
 				break;
 			}
 		}
-		freeVAOs.push(chunk->vaoIndex);
+		cm->freeVAOs.push(chunk->vaoIndex);
 		delete chunk;
 		ChunkCoords leftCoords(x - 1, y, 0, 0);
 		ChunkCoords rightCoords(x + 1, y, 0, 0);
 		ChunkCoords frontCoords(x, y - 1, 0, 0);
 		ChunkCoords backCoords(x, y + 1, 0, 0);
-		Chunk* left = findChunkWithCoords(&leftCoords, 0, chunks.size() - 1);
-		Chunk* right = findChunkWithCoords(&rightCoords, 0, chunks.size() - 1);
-		Chunk* front = findChunkWithCoords(&frontCoords, 0, chunks.size() - 1);
-		Chunk* back = findChunkWithCoords(&backCoords, 0, chunks.size() - 1);
+		Chunk* left = findChunkWithCoords(cm->chunks, &leftCoords, 0, cm->chunks.size() - 1);
+		Chunk* right = findChunkWithCoords(cm->chunks, &rightCoords, 0, cm->chunks.size() - 1);
+		Chunk* front = findChunkWithCoords(cm->chunks, &frontCoords, 0, cm->chunks.size() - 1);
+		Chunk* back = findChunkWithCoords(cm->chunks, &backCoords, 0, cm->chunks.size() - 1);
 		if (left != NULL) {
 			left->reorderBlocks();
 			left->updateVAO();
@@ -312,9 +295,5 @@ ChunkCoords World::blockToChunkCoords(int bx, int bz) {
 
 World::~World()
 {
-	for (int i = 0; i < NUM_CHUNK_VAOS; i++) {
-		free(VAOs[i]);
-	}
-	free(VAOs);
-	delete generator;
+	delete cm;
 }

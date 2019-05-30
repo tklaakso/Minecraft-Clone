@@ -44,11 +44,11 @@ int main() {
 	Input::initialize();
 
 	World* world = new World();
-	for (int x = -3; x <= 3; x++) {
-		for (int y = -3; y <= 3; y++) {
+	/*for (int x = 0; x <= 1; x++) {
+		for (int y = 0; y <= 1; y++) {
 			world->makeChunk(x, y);
 		}
-	}
+	}*/
 
 	Player* player = new Player(window, world);
 

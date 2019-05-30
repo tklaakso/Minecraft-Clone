@@ -5,6 +5,9 @@
 #include "Chunk.h"
 #include "ChunkVAO.h"
 #include "ChunkCoords.h"
+#include "ChunkManager.h"
+#include "Util.h"
+#include "ChunkThreadPool.h"
 
 class World
 {
@@ -27,12 +30,8 @@ public:
 	int renderDistance;
 private:
 	int playerChunkX, playerChunkY;
-	Chunk* findChunkWithCoords(ChunkCoords* coords, int l, int r);
-	WorldGenerator* generator;
+	ChunkThreadPool* pool;
+	ChunkManager* cm;
 	static ChunkCoords blockToChunkCoords(int bx, int bz);
-	std::vector<Chunk*> chunks;
-	ChunkVAO** VAOs;
-	std::queue<int> freeVAOs;
-	int numUsedVAOs;
 };
 
