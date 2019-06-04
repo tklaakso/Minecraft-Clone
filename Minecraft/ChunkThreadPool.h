@@ -6,8 +6,10 @@ class ChunkThreadPool
 {
 public:
 	ChunkThreadPool(ChunkManager* cm, int numThreads);
-	void createChunk(ChunkCoords coords);
-	void deleteChunk(ChunkCoords coords);
+	void createChunk(Chunk* c);
+	void finalizeChunk(Chunk* c);
+	void deleteChunk(Chunk* c);
+	void exit();
 	~ChunkThreadPool();
 private:
 	ChunkThread** threads;

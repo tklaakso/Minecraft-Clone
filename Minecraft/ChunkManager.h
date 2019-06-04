@@ -7,7 +7,7 @@ class ChunkManager
 {
 public:
 	ChunkManager();
-	std::vector<Chunk*> chunks;
+	std::vector<Chunk*>* chunks;
 	ChunkVAO** VAOs;
 	WorldGenerator* generator;
 	std::queue<int> freeVAOs;

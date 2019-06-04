@@ -8,13 +8,15 @@ ChunkManager::ChunkManager()
 		VAOs[i] = vao;
 	}
 	generator = new WorldGenerator();
+	chunks = new std::vector<Chunk*>();
 }
 
 ChunkManager::~ChunkManager()
 {
 	for (int i = 0; i < NUM_CHUNK_VAOS; i++) {
-		free(VAOs[i]);
+		delete VAOs[i];
 	}
 	free(VAOs);
 	delete generator;
+	delete chunks;
 }

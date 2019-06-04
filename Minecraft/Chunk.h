@@ -11,12 +11,15 @@ class Chunk
 {
 public:
 	Chunk(int x, int y, ChunkVAO* vao, int vaoIndex);
+	Chunk(int x, int y);
+	void setVAO(ChunkVAO* vao, int vaoIndex);
 	void setBlock(int globalX, int globalY, int globalZ, Block* block, bool update);
 	Block* getBlock(int globalX, int globalY, int globalZ);
 	bool blockInChunk(int globalX, int globalY, int globalZ);
 	void setBlockLocal(int localX, int localY, int localZ, Block* block, bool update);
 	void initWithoutGeneration();
-	void generate(WorldGenerator* gen, Chunk** neighbors);
+	void generate(WorldGenerator* gen);
+	void updateNeighbors(Chunk** neighbors);
 	void updateVAO();
 	int compare(Chunk* other);
 	int compare(ChunkCoords* other);
@@ -29,6 +32,10 @@ public:
 	int x, y;
 	glm::vec3* translations;
 	int* textures;
+	bool generating;
+	bool finalizing;
+	bool deleting;
+	static int chunksInPlay;
 	~Chunk();
 private:
 	bool insideViewFrustum;

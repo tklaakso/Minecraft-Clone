@@ -66,4 +66,7 @@ void Input::deInitialize() {
 
 Input::~Input()
 {
+	free(keysPressed);
+	free(keysPressedPrev);
+	free(keysClicked);
 }

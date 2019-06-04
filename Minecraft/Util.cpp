@@ -19,12 +19,12 @@ BlockCoords indexToBlockCoords(int index) {
 	return BlockCoords(bx, by, bz);
 }
 
-Chunk* findChunkWithCoords(std::vector<Chunk*> chunks, ChunkCoords* coords, int l, int r) {
+Chunk* findChunkWithCoords(std::vector<Chunk*>* chunks, ChunkCoords* coords, int l, int r) {
 	if (r >= l) {
 		int mid = l + (r - l) / 2;
-		int cmp = chunks[mid]->compare(coords);
+		int cmp = (*chunks)[mid]->compare(coords);
 		if (cmp == 0) {
-			return chunks[mid];
+			return (*chunks)[mid];
 		}
 		if (cmp > 0) {
 			return findChunkWithCoords(chunks, coords, l, mid - 1);

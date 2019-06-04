@@ -89,7 +89,7 @@ const int NUM_TEXTURES = 12;
 const int BLOCK_TEXTURE_WIDTH = 48;
 const int BLOCK_TEXTURE_HEIGHT = 48;
 
-const int NUM_CHUNK_VAOS = 256;
+const int NUM_CHUNK_VAOS = 512;
 const int CHUNK_HEIGHT = 256;
 const int CHUNK_WIDTH = 16;
 const int BLOCKS_PER_CHUNK = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;

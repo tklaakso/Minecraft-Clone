@@ -12,13 +12,16 @@ class ChunkThread
 public:
 	ChunkThread(ChunkManager *cm);
 	void initialize(std::mutex* chunkMutex);
-	void createChunk(ChunkCoords coords);
-	void deleteChunk(ChunkCoords coords);
+	void exit();
+	void createChunk(Chunk* c);
+	void finalizeChunk(Chunk* c);
+	void deleteChunk(Chunk* c);
 	~ChunkThread();
 private:
 	void run();
-	std::vector<ChunkCoords> toCreate;
-	std::vector<ChunkCoords> toDelete;
+	std::vector<Chunk*> toCreate;
+	std::vector<Chunk*> toFinalize;
+	std::vector<Chunk*> toDelete;
 	ChunkManager* cm;
 	std::mutex createDeleteMutex;
 	std::mutex* chunkMutex;

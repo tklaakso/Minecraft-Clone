@@ -5,7 +5,7 @@ World::World()
 {
 	cm = new ChunkManager();
 	pool = new ChunkThreadPool(cm, 1);
-	renderDistance = 2;
+	renderDistance = 8;
 }
 
 Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
@@ -13,7 +13,7 @@ Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
 		return suspect->getBlock(x, y, z);
 	}
 	ChunkCoords coords = blockToChunkCoords(x, z);
-	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
+	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
 	if (chunk == NULL) {
 		return NULL;
 	}
@@ -28,7 +28,7 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
-		c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
+		c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
 	}
 	if (c != NULL) {
 		c->textures[block->translationIndex] = block->shouldRender ? block->type : -1;
@@ -37,7 +37,7 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 
 void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorderNeighbors) {
 	ChunkCoords coords = blockToChunkCoords(x, z);
-	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
+	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
 	if (chunk != NULL) {
 		chunk->setBlock(x, y, z, block, update);
 		Block* left = getBlock(x - 1, y, z, chunk);
@@ -124,9 +124,13 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 	}
 }
 
+void World::exit() {
+	pool->exit();
+}
+
 void World::reorderBlocks() {
-	for (int i = 0; i < cm->chunks.size(); i++) {
-		cm->chunks[i]->reorderBlocks();
+	for (int i = 0; i < cm->chunks->size(); i++) {
+		(*(cm->chunks))[i]->reorderBlocks();
 	}
 }
 
@@ -138,28 +142,28 @@ void World::reorderBlock(Block* block, Chunk* suspect) {
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
-		Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
+		Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
 		c->reorderBlock(block);
 		c->updateVAO();
 	}
 }
 
 void World::updateChunkVAOs() {
-	for (int i = 0; i < cm->chunks.size(); i++) {
-		cm->chunks[i]->updateVAO();
+	for (int i = 0; i < cm->chunks->size(); i++) {
+		(*(cm->chunks))[i]->updateVAO();
 	}
 }
 
 bool World:: chunkExists(int x, int y) {
 	ChunkCoords coords(x, y, 0, 0);
-	return findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1) != NULL;
+	return findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1) != NULL;
 }
 
 void World::updateLoadedChunks() {
 	glm::vec2 playerChunkPos((float)playerChunkX, float(playerChunkY));
-	for (int i = cm->chunks.size() - 1; i >= 0; i--) {
-		if (glm::length(glm::vec2((float)cm->chunks[i]->x, (float)cm->chunks[i]->y) - playerChunkPos) > renderDistance) {
-			//deleteChunk(cm->chunks[i]->x, cm->chunks[i]->y);
+	for (int i = cm->chunks->size() - 1; i >= 0; i--) {
+		if (glm::length(glm::vec2((float)(*(cm->chunks))[i]->x, (float)(*(cm->chunks))[i]->y) - playerChunkPos) > renderDistance) {
+			deleteChunk((*(cm->chunks))[i]->x, (*(cm->chunks))[i]->y);
 		}
 	}
 	for (int x = (int)playerChunkPos.x - renderDistance; x < (int)playerChunkPos.x + renderDistance; x++) {
@@ -167,7 +171,7 @@ void World::updateLoadedChunks() {
 			int localX = x - (int)playerChunkPos.x;
 			int localY = y - (int)playerChunkPos.y;
 			if (glm::sqrt(localX * localX + localY * localY) <= renderDistance && !chunkExists(x, y)) {
-				//makeChunk(x, y);
+				makeChunk(x, y);
 			}
 		}
 	}
@@ -187,8 +191,11 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 
 void World::render() {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
-	for (int i = 0; i < cm->chunks.size(); i++) {
-		cm->chunks[i]->render();
+	std::cout << Chunk::chunksInPlay << std::endl;
+	for (int i = 0; i < cm->chunks->size(); i++) {
+		if (!(*(cm->chunks))[i]->generating && !(*(cm->chunks))[i]->deleting) {
+			(*(cm->chunks))[i]->render();
+		}
 	}
 }
 
@@ -233,18 +240,39 @@ void World::makeChunk(int x, int y) {
 		}
 	}
 	cm->chunks.push_back(c);*/
-	ChunkCoords coords(x, y, 0, 0);
-	pool->createChunk(coords);
+	if (!chunkExists(x, y)) {
+		Chunk* c = new Chunk(x, y);
+		c->generating = true;
+		bool addedChunk = false;
+		for (int i = 0; i < cm->chunks->size(); i++) {
+			int cmp = (*(cm->chunks))[i]->compare(c);
+			if (cmp == 0) {
+				std::cout << "Error: tried to create existing chunk" << std::endl;
+				addedChunk = true;
+				break;
+			}
+			if (cmp > 0) {
+				cm->chunks->insert(cm->chunks->begin() + i, c);
+				addedChunk = true;
+				break;
+			}
+		}
+		if (!addedChunk) {
+			cm->chunks->push_back(c);
+		}
+		pool->createChunk(c);
+		pool->finalizeChunk(c);
+	}
 }
 
 void World::updateViewFrustum(ViewFrustum* frustum) {
-	for (int i = 0; i < cm->chunks.size(); i++) {
-		cm->chunks[i]->updateViewFrustum(frustum);
+	for (int i = 0; i < cm->chunks->size(); i++) {
+		(*(cm->chunks))[i]->updateViewFrustum(frustum);
 	}
 }
 
 void World::deleteChunk(int x, int y) {
-  ChunkCoords coords(x, y, 0, 0);
+  /*ChunkCoords coords(x, y, 0, 0);
 	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks.size() - 1);
 	if (chunk != NULL) {
 		for (int i = 0; i < cm->chunks.size(); i++) {
@@ -282,6 +310,18 @@ void World::deleteChunk(int x, int y) {
 	}
 	else {
 		std::cout << "Error: tried to delete nonexistent chunk" << std::endl;
+	}*/
+	ChunkCoords coords(x, y, 0, 0);
+	Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+	if (c != NULL) {
+		for (int i = 0; i < cm->chunks->size(); i++) {
+			if ((*(cm->chunks))[i] == c) {
+				cm->chunks->erase(cm->chunks->begin() + i);
+				break;
+			}
+		}
+		c->deleting = true;
+		pool->deleteChunk(c);
 	}
 }
 
@@ -296,4 +336,5 @@ ChunkCoords World::blockToChunkCoords(int bx, int bz) {
 World::~World()
 {
 	delete cm;
+	delete pool;
 }

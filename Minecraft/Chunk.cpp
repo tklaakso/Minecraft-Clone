@@ -2,20 +2,30 @@
 #include "Constants.h"
 #include "Util.h"
 
+int Chunk::chunksInPlay = 0;
+
 Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex)
 {
 	this->x = x;
 	this->y = y;
 	this->vao = vao;
 	this->vaoIndex = vaoIndex;
+	deleting = generating = finalizing = false;
 	insideViewFrustum = true;
 	numBlocks = numBlocksRendered = 0;
-	translations = (glm::vec3*)malloc(sizeof(glm::vec3) * BLOCKS_PER_CHUNK);
-	translationBlocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK);
-	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
-		translationBlocks[i] = NULL;
-	}
-	textures = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
+}
+
+Chunk::Chunk(int x, int y) {
+	this->x = x;
+	this->y = y;
+	deleting = generating = finalizing = false;
+	insideViewFrustum = true;
+	numBlocks = numBlocksRendered = 0;
+}
+
+void Chunk::setVAO(ChunkVAO* vao, int vaoIndex) {
+	this->vao = vao;
+	this->vaoIndex = vaoIndex;
 }
 
 void Chunk::swapBlockIndices(Block* b1, int index1, Block* b2, int index2) {
@@ -40,14 +50,25 @@ Block* Chunk::blockWithTranslationIndex(int translationIndex) {
 }
 
 void Chunk::initWithoutGeneration() {
+	chunksInPlay++;
 	blocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK);
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		blocks[i] = NULL;
 	}
 }
 
-void Chunk::generate(WorldGenerator* gen, Chunk** neighbors) {
+void Chunk::generate(WorldGenerator* gen) {
+	chunksInPlay++;
+	translations = (glm::vec3*)malloc(sizeof(glm::vec3) * BLOCKS_PER_CHUNK);
+	translationBlocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK);
+	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
+		translationBlocks[i] = NULL;
+	}
+	textures = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
 	blocks = gen->getChunkBlocks(x, y);
+}
+
+void Chunk::updateNeighbors(Chunk** neighbors) {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		int bx, by, bz, gx, gy, gz;
 		if (blocks[i] != NULL) {
@@ -362,6 +383,7 @@ void Chunk::render() {
 
 Chunk::~Chunk()
 {
+	chunksInPlay--;
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
   	if (blocks[i] != NULL) {
 			if (blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT] != NULL) {

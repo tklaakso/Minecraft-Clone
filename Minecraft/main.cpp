@@ -44,11 +44,12 @@ int main() {
 	Input::initialize();
 
 	World* world = new World();
-	for (int x = 0; x < 10; x++) {
-		for (int y = 0; y < 10; y++) {
+	/*for (int x = 0; x < 50; x++) {
+		for (int y = 0; y < 50; y++) {
+			std::cout << x * 50 + y << std::endl;
 			world->makeChunk(x, y);
 		}
-	}
+	}*/
 
 	Player* player = new Player(window, world);
 
@@ -124,6 +125,8 @@ int main() {
 		glfwPollEvents();
 
 	}
+
+	world->exit();
 	
 	delete world;
 

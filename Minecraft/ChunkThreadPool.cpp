@@ -11,14 +11,26 @@ ChunkThreadPool::ChunkThreadPool(ChunkManager* cm, int numThreads)
 	}
 }
 
-void ChunkThreadPool::createChunk(ChunkCoords coords) {
-	threads[threadIndex]->createChunk(coords);
+void ChunkThreadPool::exit() {
+	for (int i = 0; i < numThreads; i++) {
+		threads[i]->exit();
+	}
+}
+
+void ChunkThreadPool::createChunk(Chunk* c) {
+	threads[threadIndex]->createChunk(c);
 	threadIndex++;
 	threadIndex %= numThreads;
 }
 
-void ChunkThreadPool::deleteChunk(ChunkCoords coords) {
-	threads[threadIndex]->deleteChunk(coords);
+void ChunkThreadPool::finalizeChunk(Chunk* c) {
+	threads[threadIndex]->finalizeChunk(c);
+	threadIndex++;
+	threadIndex %= numThreads;
+}
+
+void ChunkThreadPool::deleteChunk(Chunk* c) {
+	threads[threadIndex]->deleteChunk(c);
 	threadIndex++;
 	threadIndex %= numThreads;
 }
