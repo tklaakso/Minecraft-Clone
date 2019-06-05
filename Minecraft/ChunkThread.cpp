@@ -1,9 +1,11 @@
 #include "ChunkThread.h"
 
-ChunkThread::ChunkThread(ChunkManager* cm)
+ChunkThread::ChunkThread(ChunkManager* cm, std::vector<Chunk*>* creationQueue, std::vector<Chunk*>* deletionQueue)
 {
 	running = true;
 	this->cm = cm;
+	this->creationQueue = creationQueue;
+	this->deletionQueue = deletionQueue;
 }
 
 void ChunkThread::initialize(std::mutex* chunkMutex) {
@@ -15,10 +17,151 @@ void ChunkThread::exit() {
 	thread.join();
 }
 
+void ChunkThread::updateCreationQueue() {
+	chunkMutex->lock();
+	if (creationQueue->size() > 0) {
+		Chunk* c = (*creationQueue)[0];
+		creationQueue->erase(creationQueue->begin());
+		chunkMutex->unlock();
+		chunkMutex->lock();
+		if (c->state == Chunk::WAITING_FOR_GENERATE) {
+			c->state = Chunk::GENERATING;
+			chunkMutex->unlock();
+			ChunkVAO* vao;
+			int vaoIndex;
+			chunkMutex->lock();
+			if (!cm->freeVAOs.empty()) {
+				vaoIndex = cm->freeVAOs.front();
+				vao = cm->VAOs[vaoIndex];
+				cm->freeVAOs.pop();
+				chunkMutex->unlock();
+			}
+			else {
+				vaoIndex = cm->numUsedVAOs;
+				vao = cm->VAOs[vaoIndex];
+				cm->numUsedVAOs++;
+				chunkMutex->unlock();
+			}
+			c->setVAO(vao, vaoIndex);
+			c->generate(cm->generator);
+			chunkMutex->lock();
+			c->state = Chunk::WAITING_FOR_FINALIZE;
+			creationQueue->push_back(c);
+			chunkMutex->unlock();
+		}
+		else if (c->state == Chunk::WAITING_FOR_FINALIZE) {
+			chunkMutex->unlock();
+			Chunk** neighbors = c->neighbors;
+			bool neighborProcessing = false;
+			for (int i = 0; i < 4; i++) {
+				chunkMutex->lock();
+				if (neighbors[i] != NULL) {
+					int state = neighbors[i]->state;
+					if (state == Chunk::WAITING_FOR_GENERATE || state == Chunk::GENERATING || state == Chunk::DELETING) {
+						neighborProcessing = true;
+						chunkMutex->unlock();
+						break;
+					}
+				}
+				chunkMutex->unlock();
+			}
+			if (neighborProcessing) {
+				chunkMutex->lock();
+				creationQueue->push_back(c);
+				chunkMutex->unlock();
+			}
+			else {
+				chunkMutex->lock();
+				c->state = Chunk::FINALIZING;
+				chunkMutex->unlock();
+				c->updateNeighbors();
+				chunkMutex->lock();
+				c->state = Chunk::RENDERING;
+				chunkMutex->unlock();
+			}
+		}
+		else {
+			chunkMutex->unlock();
+		}
+	}
+	else {
+		chunkMutex->unlock();
+	}
+}
+
+void ChunkThread::updateDeletionQueue() {
+	chunkMutex->lock();
+	if (deletionQueue->size() > 0) {
+		Chunk* c = (*deletionQueue)[0];
+		deletionQueue->erase(deletionQueue->begin());
+		chunkMutex->unlock();
+		chunkMutex->lock();
+		if (c->state != Chunk::RENDERING) {
+			deletionQueue->push_back(c);
+			chunkMutex->unlock();
+		}
+		else {
+			chunkMutex->unlock();
+			Chunk** neighbors = c->neighbors;
+			bool neighborProcessing = false;
+			chunkMutex->lock();
+			for (int i = 0; i < 4; i++) {
+				if (neighbors[i] != NULL) {
+					int state = neighbors[i]->state;
+					if (state != Chunk::RENDERING) {
+						neighborProcessing = true;
+						break;
+					}
+				}
+			}
+			if (!neighborProcessing) {
+				c->state = Chunk::DELETING;
+				Chunk** neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
+				for (int i = 0; i < 4; i++) {
+					neighbors[i] = c->neighbors[i];
+				}
+				chunkMutex->unlock();
+				delete c;
+				for (int i = 0; i < 4; i++) {
+					if (neighbors[i] != NULL) {
+						neighbors[i]->reorderBlocks();
+						neighbors[i]->updateVAO();
+					}
+				}
+				chunkMutex->lock();
+				if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
+					neighbors[CHUNK_NEIGHBOR_LEFT]->neighbors[CHUNK_NEIGHBOR_RIGHT] = NULL;
+				}
+				if (neighbors[CHUNK_NEIGHBOR_RIGHT] != NULL) {
+					neighbors[CHUNK_NEIGHBOR_RIGHT]->neighbors[CHUNK_NEIGHBOR_LEFT] = NULL;
+				}
+				if (neighbors[CHUNK_NEIGHBOR_FRONT] != NULL) {
+					neighbors[CHUNK_NEIGHBOR_FRONT]->neighbors[CHUNK_NEIGHBOR_BACK] = NULL;
+				}
+				if (neighbors[CHUNK_NEIGHBOR_BACK] != NULL) {
+					neighbors[CHUNK_NEIGHBOR_BACK]->neighbors[CHUNK_NEIGHBOR_FRONT] = NULL;
+				}
+				chunkMutex->unlock();
+			}
+			else {
+				chunkMutex->unlock();
+			}
+			chunkMutex->lock();
+			c->state = Chunk::DELETING;
+			chunkMutex->unlock();
+		}
+	}
+	else {
+		chunkMutex->unlock();
+	}
+}
+
 void ChunkThread::run() {
 	while (running) {
-		createDeleteMutex.lock();
-		if (toCreate.size() == 0 && toDelete.size() == 0 && toFinalize.size() == 0) {
+		updateCreationQueue();
+		updateDeletionQueue();
+		/*createDeleteMutex.lock();
+		if (creationQueue->size() == 0 && deletionQueue->size() == 0) {
 			createDeleteMutex.unlock();
 			std::unique_lock<std::mutex> lock(mtx);
 			cond.wait(lock);
@@ -144,29 +287,8 @@ void ChunkThread::run() {
 				std::cout << "Error: tried to delete nonexistent chunk" << std::endl;
 			}
 			toDelete.erase(toDelete.begin());
-		}
+		}*/
 	}
-}
-
-void ChunkThread::createChunk(Chunk* c) {
-	createDeleteMutex.lock();
-	toCreate.push_back(c);
-	createDeleteMutex.unlock();
-	cond.notify_all();
-}
-
-void ChunkThread::finalizeChunk(Chunk* c) {
-	createDeleteMutex.lock();
-	toFinalize.push_back(c);
-	createDeleteMutex.unlock();
-	cond.notify_all();
-}
-
-void ChunkThread::deleteChunk(Chunk* c) {
-	createDeleteMutex.lock();
-	toDelete.push_back(c);
-	createDeleteMutex.unlock();
-	cond.notify_all();
 }
 
 ChunkThread::~ChunkThread()

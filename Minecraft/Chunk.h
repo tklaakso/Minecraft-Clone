@@ -19,7 +19,7 @@ public:
 	void setBlockLocal(int localX, int localY, int localZ, Block* block, bool update);
 	void initWithoutGeneration();
 	void generate(WorldGenerator* gen);
-	void updateNeighbors(Chunk** neighbors);
+	void updateNeighbors();
 	void updateVAO();
 	int compare(Chunk* other);
 	int compare(ChunkCoords* other);
@@ -32,10 +32,15 @@ public:
 	int x, y;
 	glm::vec3* translations;
 	int* textures;
-	bool generating;
-	bool finalizing;
-	bool deleting;
+	int state;
+	Chunk** neighbors;
 	static int chunksInPlay;
+	static const int WAITING_FOR_GENERATE = 0;
+	static const int GENERATING = 1;
+	static const int WAITING_FOR_FINALIZE = 2;
+	static const int FINALIZING = 3;
+	static const int RENDERING = 4;
+	static const int DELETING = 5;
 	~Chunk();
 private:
 	bool insideViewFrustum;

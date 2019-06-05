@@ -10,18 +10,16 @@
 class ChunkThread
 {
 public:
-	ChunkThread(ChunkManager *cm);
+	ChunkThread(ChunkManager *cm, std::vector<Chunk*>* creationQueue, std::vector<Chunk*>* deletionQueue);
 	void initialize(std::mutex* chunkMutex);
+	void updateCreationQueue();
+	void updateDeletionQueue();
 	void exit();
-	void createChunk(Chunk* c);
-	void finalizeChunk(Chunk* c);
-	void deleteChunk(Chunk* c);
 	~ChunkThread();
 private:
 	void run();
-	std::vector<Chunk*> toCreate;
-	std::vector<Chunk*> toFinalize;
-	std::vector<Chunk*> toDelete;
+	std::vector<Chunk*>* creationQueue;
+	std::vector<Chunk*>* deletionQueue;
 	ChunkManager* cm;
 	std::mutex createDeleteMutex;
 	std::mutex* chunkMutex;

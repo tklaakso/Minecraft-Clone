@@ -191,9 +191,9 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 
 void World::render() {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
-	std::cout << Chunk::chunksInPlay << std::endl;
+	//std::cout << Chunk::chunksInPlay << std::endl;
 	for (int i = 0; i < cm->chunks->size(); i++) {
-		if (!(*(cm->chunks))[i]->generating && !(*(cm->chunks))[i]->deleting) {
+		if ((*(cm->chunks))[i]->state == Chunk::RENDERING) {
 			(*(cm->chunks))[i]->render();
 		}
 	}
@@ -242,7 +242,7 @@ void World::makeChunk(int x, int y) {
 	cm->chunks.push_back(c);*/
 	if (!chunkExists(x, y)) {
 		Chunk* c = new Chunk(x, y);
-		c->generating = true;
+		c->state = Chunk::WAITING_FOR_GENERATE;
 		bool addedChunk = false;
 		for (int i = 0; i < cm->chunks->size(); i++) {
 			int cmp = (*(cm->chunks))[i]->compare(c);
@@ -261,7 +261,6 @@ void World::makeChunk(int x, int y) {
 			cm->chunks->push_back(c);
 		}
 		pool->createChunk(c);
-		pool->finalizeChunk(c);
 	}
 }
 
@@ -320,7 +319,6 @@ void World::deleteChunk(int x, int y) {
 				break;
 			}
 		}
-		c->deleting = true;
 		pool->deleteChunk(c);
 	}
 }

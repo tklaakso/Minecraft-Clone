@@ -10,17 +10,19 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex)
 	this->y = y;
 	this->vao = vao;
 	this->vaoIndex = vaoIndex;
-	deleting = generating = finalizing = false;
 	insideViewFrustum = true;
 	numBlocks = numBlocksRendered = 0;
+	state = WAITING_FOR_GENERATE;
+	neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
 }
 
 Chunk::Chunk(int x, int y) {
 	this->x = x;
 	this->y = y;
-	deleting = generating = finalizing = false;
 	insideViewFrustum = true;
 	numBlocks = numBlocksRendered = 0;
+	state = WAITING_FOR_GENERATE;
+	neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
 }
 
 void Chunk::setVAO(ChunkVAO* vao, int vaoIndex) {
@@ -68,7 +70,7 @@ void Chunk::generate(WorldGenerator* gen) {
 	blocks = gen->getChunkBlocks(x, y);
 }
 
-void Chunk::updateNeighbors(Chunk** neighbors) {
+void Chunk::updateNeighbors() {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		int bx, by, bz, gx, gy, gz;
 		if (blocks[i] != NULL) {
@@ -417,4 +419,5 @@ Chunk::~Chunk()
 	free(translations);
 	free(translationBlocks);
 	free(textures);
+	free(neighbors);
 }
