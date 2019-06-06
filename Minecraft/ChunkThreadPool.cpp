@@ -39,7 +39,6 @@ void ChunkThreadPool::createChunk(Chunk* c) {
 			coords.chunkX = c->x;
 			coords.chunkZ = c->y + 1;
 		}
-		chunkMutex.lock();
 		c->neighbors[i] = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
 		if (c->neighbors[i] != NULL) {
 			if (i == CHUNK_NEIGHBOR_LEFT) {
@@ -55,13 +54,16 @@ void ChunkThreadPool::createChunk(Chunk* c) {
 				c->neighbors[i]->neighbors[CHUNK_NEIGHBOR_FRONT] = c;
 			}
 		}
-		chunkMutex.unlock();
 	}
+	chunkMutex.lock();
 	creationQueue->push_back(c);
+	chunkMutex.unlock();
 }
 
 void ChunkThreadPool::deleteChunk(Chunk* c) {
+	chunkMutex.lock();
 	deletionQueue->push_back(c);
+	chunkMutex.unlock();
 }
 
 ChunkThreadPool::~ChunkThreadPool()

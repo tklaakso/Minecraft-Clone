@@ -49,6 +49,8 @@ private:
 	Block* blockWithTranslationIndex(int translationIndex);
 	int numBlocks;
 	int numBlocksRendered;
+	int blockChanges;
+	Block** prevBlocks;
 	Block** blocks;
 	Block** translationBlocks;
 	queue<int> freeBlocks;

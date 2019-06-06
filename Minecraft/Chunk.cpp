@@ -13,6 +13,8 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex)
 	insideViewFrustum = true;
 	numBlocks = numBlocksRendered = 0;
 	state = WAITING_FOR_GENERATE;
+	prevBlocks = NULL;
+	blockChanges = 0;
 	neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
 }
 
@@ -22,6 +24,8 @@ Chunk::Chunk(int x, int y) {
 	insideViewFrustum = true;
 	numBlocks = numBlocksRendered = 0;
 	state = WAITING_FOR_GENERATE;
+	prevBlocks = NULL;
+	blockChanges = 0;
 	neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
 }
 
@@ -94,7 +98,7 @@ void Chunk::updateNeighbors() {
 			blocks[i]->neighbors[BLOCK_NEIGHBOR_UP] = getBlock(gx, gy + 1, gz);
 			blocks[i]->neighbors[BLOCK_NEIGHBOR_DOWN] = getBlock(gx, gy - 1, gz);
 		}
-		if (bx == 0) {
+		if (bx == 0 && false) {
 			if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_LEFT]->getBlock(gx - 1, gy, gz);
 				if (b != NULL) {
@@ -118,7 +122,7 @@ void Chunk::updateNeighbors() {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT] = getBlock(gx - 1, gy, gz);
 			}
 		}
-		if (bx == CHUNK_WIDTH - 1) {
+		if (bx == CHUNK_WIDTH - 1 && false) {
 			if (neighbors[CHUNK_NEIGHBOR_RIGHT] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_RIGHT]->getBlock(gx + 1, gy, gz);
 				if (b != NULL) {
@@ -142,7 +146,7 @@ void Chunk::updateNeighbors() {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_RIGHT] = getBlock(gx + 1, gy, gz);
 			}
 		}
-		if (bz == 0) {
+		if (bz == 0 && false) {
 			if (neighbors[CHUNK_NEIGHBOR_FRONT] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_FRONT]->getBlock(gx, gy, gz - 1);
 				if (b != NULL) {
@@ -166,7 +170,7 @@ void Chunk::updateNeighbors() {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_FRONT] = getBlock(gx, gy, gz - 1);
 			}
 		}
-		if (bz == CHUNK_WIDTH - 1) {
+		if (bz == CHUNK_WIDTH - 1 && false) {
 			if (neighbors[CHUNK_NEIGHBOR_BACK] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_BACK]->getBlock(gx, gy, gz + 1);
 				if (b != NULL) {
@@ -321,6 +325,11 @@ bool Chunk::blockInChunk(int globalX, int globalY, int globalZ) {
 Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
 	int localX = globalX - x * CHUNK_WIDTH;
 	int localZ = globalZ - y * CHUNK_WIDTH;
+	if (blocks != prevBlocks) {
+		prevBlocks = blocks;
+		blockChanges++;
+		//std::cout << "Block " << blockChanges << ": " << blocks << ", " << blockCoordsToIndex(localX, globalY, localZ) << std::endl;
+	}
 	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
 		return blocks[blockCoordsToIndex(localX, globalY, localZ)];
 	}

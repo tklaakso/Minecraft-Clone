@@ -9,11 +9,11 @@ public:
 	void createChunk(Chunk* c);
 	void deleteChunk(Chunk* c);
 	void exit();
+	std::mutex chunkMutex;
 	~ChunkThreadPool();
 private:
 	ChunkThread** threads;
 	ChunkManager* cm;
-	std::mutex chunkMutex;
 	std::vector<Chunk*>* creationQueue;
 	std::vector<Chunk*>* deletionQueue;
 	int numThreads;
