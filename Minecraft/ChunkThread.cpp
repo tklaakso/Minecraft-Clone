@@ -19,58 +19,49 @@ void ChunkThread::exit() {
 
 void ChunkThread::updateCreationQueue() {
 	chunkMutex->lock();
-	std::cout << creationQueue << std::endl;
 	if (creationQueue->size() > 0) {
 		Chunk* c = (*creationQueue)[0];
 		std::cout << "Create state: " << c->state << std::endl;
 		creationQueue->erase(creationQueue->begin());
 		for (int i = 0; i < creationQueue->size(); i++) {
 			if ((*creationQueue)[i]->compare(c) == 0) {
+				chunkMutex->unlock();
 				return;
 			}
 		}
 		chunkMutex->unlock();
-		chunkMutex->lock();
 		if (c->state == Chunk::WAITING_FOR_GENERATE) {
 			c->state = Chunk::GENERATING;
-			chunkMutex->unlock();
 			ChunkVAO* vao;
 			int vaoIndex;
-			chunkMutex->lock();
 			if (!cm->freeVAOs.empty()) {
 				vaoIndex = cm->freeVAOs.front();
 				vao = cm->VAOs[vaoIndex];
 				cm->freeVAOs.pop();
-				chunkMutex->unlock();
 			}
 			else {
 				vaoIndex = cm->numUsedVAOs;
 				vao = cm->VAOs[vaoIndex];
 				cm->numUsedVAOs++;
-				chunkMutex->unlock();
 			}
 			c->setVAO(vao, vaoIndex);
 			c->generate(cm->generator);
-			chunkMutex->lock();
 			c->state = Chunk::WAITING_FOR_FINALIZE;
+			chunkMutex->lock();
 			creationQueue->push_back(c);
 			chunkMutex->unlock();
 		}
 		else if (c->state == Chunk::WAITING_FOR_FINALIZE) {
-			chunkMutex->unlock();
 			Chunk** neighbors = c->neighbors;
 			bool neighborProcessing = false;
 			for (int i = 0; i < 4; i++) {
-				chunkMutex->lock();
 				if (neighbors[i] != NULL) {
 					int state = neighbors[i]->state;
 					if (state == Chunk::WAITING_FOR_GENERATE || state == Chunk::GENERATING || state == Chunk::DELETING) {
 						neighborProcessing = true;
-						chunkMutex->unlock();
 						break;
 					}
 				}
-				chunkMutex->unlock();
 			}
 			if (neighborProcessing) {
 				chunkMutex->lock();
@@ -78,17 +69,10 @@ void ChunkThread::updateCreationQueue() {
 				chunkMutex->unlock();
 			}
 			else {
-				chunkMutex->lock();
 				c->state = Chunk::FINALIZING;
-				chunkMutex->unlock();
 				c->updateNeighbors();
-				chunkMutex->lock();
 				c->state = Chunk::RENDERING;
-				chunkMutex->unlock();
 			}
-		}
-		else {
-			chunkMutex->unlock();
 		}
 	}
 	else {
@@ -103,21 +87,20 @@ void ChunkThread::updateDeletionQueue() {
 		deletionQueue->erase(deletionQueue->begin());
 		for (int i = 0; i < deletionQueue->size(); i++) {
 			if ((*deletionQueue)[i]->compare(c) == 0) {
+				chunkMutex->unlock();
 				return;
 			}
 		}
 		chunkMutex->unlock();
-		chunkMutex->lock();
 		if (c->state != Chunk::RENDERING) {
 			std::cout << "State: " << c->state << ", deletion size: " << deletionQueue->size() << ", creation size: " << creationQueue->size() << std::endl;
+			chunkMutex->lock();
 			deletionQueue->push_back(c);
 			chunkMutex->unlock();
 		}
 		else {
-			chunkMutex->unlock();
 			Chunk** neighbors = c->neighbors;
 			bool neighborProcessing = false;
-			chunkMutex->lock();
 			for (int i = 0; i < 4; i++) {
 				if (neighbors[i] != NULL) {
 					int state = neighbors[i]->state;
@@ -134,7 +117,6 @@ void ChunkThread::updateDeletionQueue() {
 					neighbors[i] = c->neighbors[i];
 				}
 				cm->freeVAOs.push(c->vaoIndex);
-				chunkMutex->unlock();
 				delete c;
 				for (int i = 0; i < 4; i++) {
 					if (neighbors[i] != NULL) {
@@ -142,7 +124,6 @@ void ChunkThread::updateDeletionQueue() {
 						neighbors[i]->updateVAO();
 					}
 				}
-				chunkMutex->lock();
 				if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
 					neighbors[CHUNK_NEIGHBOR_LEFT]->neighbors[CHUNK_NEIGHBOR_RIGHT] = NULL;
 				}
@@ -155,14 +136,8 @@ void ChunkThread::updateDeletionQueue() {
 				if (neighbors[CHUNK_NEIGHBOR_BACK] != NULL) {
 					neighbors[CHUNK_NEIGHBOR_BACK]->neighbors[CHUNK_NEIGHBOR_FRONT] = NULL;
 				}
-				chunkMutex->unlock();
 			}
-			else {
-				chunkMutex->unlock();
-			}
-			chunkMutex->lock();
 			c->state = Chunk::DELETING;
-			chunkMutex->unlock();
 		}
 	}
 	else {
