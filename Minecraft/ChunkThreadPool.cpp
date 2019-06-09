@@ -10,7 +10,7 @@ ChunkThreadPool::ChunkThreadPool(ChunkManager* cm, int numThreads)
 	threads = (ChunkThread**)malloc(sizeof(ChunkThread*) * numThreads);
 	for (int i = 0; i < numThreads; i++) {
 		threads[i] = new ChunkThread(cm, creationQueue, deletionQueue);
-		threads[i]->initialize(&chunkMutex);
+		threads[i]->initialize(&chunkMutex, &chunkManagerMutex);
 	}
 }
 
@@ -21,6 +21,27 @@ void ChunkThreadPool::exit() {
 }
 
 void ChunkThreadPool::createChunk(Chunk* c) {
+	c->state = Chunk::WAITING_FOR_GENERATE;
+	bool addedChunk = false;
+	chunkManagerMutex.lock();
+	int len = cm->chunks->size();
+	for (int i = 0; i < len; i++) {
+		int cmp = (*(cm->chunks))[i]->compare(c);
+		if (cmp == 0) {
+			std::cout << "Error: tried to create existing chunk" << std::endl;
+			addedChunk = true;
+			break;
+		}
+		if (cmp > 0) {
+			cm->chunks->insert(cm->chunks->begin() + i, c);
+			addedChunk = true;
+			break;
+		}
+	}
+	if (!addedChunk) {
+		cm->chunks->push_back(c);
+	}
+	chunkManagerMutex.unlock();
 	for (int i = 0; i < 4; i++) {
 		ChunkCoords coords(0, 0, 0, 0);
 		if (i == CHUNK_NEIGHBOR_LEFT) {
@@ -39,7 +60,9 @@ void ChunkThreadPool::createChunk(Chunk* c) {
 			coords.chunkX = c->x;
 			coords.chunkZ = c->y + 1;
 		}
+		chunkManagerMutex.lock();
 		c->neighbors[i] = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+		chunkManagerMutex.unlock();
 		if (c->neighbors[i] != NULL) {
 			if (i == CHUNK_NEIGHBOR_LEFT) {
 				c->neighbors[i]->neighbors[CHUNK_NEIGHBOR_RIGHT] = c;

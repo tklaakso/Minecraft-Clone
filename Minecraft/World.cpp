@@ -13,7 +13,9 @@ Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
 		return suspect->getBlock(x, y, z);
 	}
 	ChunkCoords coords = blockToChunkCoords(x, z);
+	pool->chunkManagerMutex.lock();
 	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+	pool->chunkManagerMutex.unlock();
 	if (chunk == NULL) {
 		return NULL;
 	}
@@ -28,7 +30,9 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
+		pool->chunkManagerMutex.lock();
 		c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+		pool->chunkManagerMutex.unlock();
 	}
 	if (c != NULL) {
 		c->textures[block->translationIndex] = block->shouldRender ? block->type : -1;
@@ -37,7 +41,9 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 
 void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorderNeighbors) {
 	ChunkCoords coords = blockToChunkCoords(x, z);
+	pool->chunkManagerMutex.lock();
 	Chunk* chunk = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+	pool->chunkManagerMutex.unlock();
 	if (chunk != NULL) {
 		chunk->setBlock(x, y, z, block, update);
 		Block* left = getBlock(x - 1, y, z, chunk);
@@ -142,7 +148,9 @@ void World::reorderBlock(Block* block, Chunk* suspect) {
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
+		pool->chunkManagerMutex.lock();
 		Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+		pool->chunkManagerMutex.unlock();
 		c->reorderBlock(block);
 		c->updateVAO();
 	}
@@ -156,7 +164,10 @@ void World::updateChunkVAOs() {
 
 bool World:: chunkExists(int x, int y) {
 	ChunkCoords coords(x, y, 0, 0);
-	return findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1) != NULL;
+	pool->chunkManagerMutex.lock();
+	Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
+	pool->chunkManagerMutex.unlock();
+	return c != NULL;
 }
 
 void World::updateLoadedChunks() {
@@ -242,24 +253,6 @@ void World::makeChunk(int x, int y) {
 	cm->chunks.push_back(c);*/
 	if (!chunkExists(x, y)) {
 		Chunk* c = new Chunk(x, y);
-		c->state = Chunk::WAITING_FOR_GENERATE;
-		bool addedChunk = false;
-		for (int i = 0; i < cm->chunks->size(); i++) {
-			int cmp = (*(cm->chunks))[i]->compare(c);
-			if (cmp == 0) {
-				std::cout << "Error: tried to create existing chunk" << std::endl;
-				addedChunk = true;
-				break;
-			}
-			if (cmp > 0) {
-				cm->chunks->insert(cm->chunks->begin() + i, c);
-				addedChunk = true;
-				break;
-			}
-		}
-		if (!addedChunk) {
-			cm->chunks->push_back(c);
-		}
 		pool->createChunk(c);
 	}
 }
@@ -311,13 +304,9 @@ void World::deleteChunk(int x, int y) {
 		std::cout << "Error: tried to delete nonexistent chunk" << std::endl;
 	}*/
 	ChunkCoords coords(x, y, 0, 0);
+	pool->chunkManagerMutex.lock();
 	Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
-	for (int i = 0; i < cm->chunks->size(); i++) {
-		if ((*(cm->chunks))[i] == c) {
-			cm->chunks->erase(cm->chunks->begin() + i);
-			break;
-		}
-	}
+	pool->chunkManagerMutex.unlock();
 	if (c != NULL) {
 		pool->deleteChunk(c);
 	}

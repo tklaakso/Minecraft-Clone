@@ -8,8 +8,9 @@ ChunkThread::ChunkThread(ChunkManager* cm, std::vector<Chunk*>* creationQueue, s
 	this->deletionQueue = deletionQueue;
 }
 
-void ChunkThread::initialize(std::mutex* chunkMutex) {
+void ChunkThread::initialize(std::mutex* chunkMutex, std::mutex* chunkManagerMutex) {
 	this->chunkMutex = chunkMutex;
+	this->chunkManagerMutex = chunkManagerMutex;
 	thread = std::thread(&ChunkThread::run, this);
 }
 
@@ -34,6 +35,7 @@ void ChunkThread::updateCreationQueue() {
 			c->state = Chunk::GENERATING;
 			ChunkVAO* vao;
 			int vaoIndex;
+			chunkManagerMutex->lock();
 			if (!cm->freeVAOs.empty()) {
 				vaoIndex = cm->freeVAOs.front();
 				vao = cm->VAOs[vaoIndex];
@@ -44,8 +46,10 @@ void ChunkThread::updateCreationQueue() {
 				vao = cm->VAOs[vaoIndex];
 				cm->numUsedVAOs++;
 			}
+			WorldGenerator* generator = cm->generator;
+			chunkManagerMutex->unlock();
 			c->setVAO(vao, vaoIndex);
-			c->generate(cm->generator);
+			c->generate(generator);
 			c->state = Chunk::WAITING_FOR_FINALIZE;
 			chunkMutex->lock();
 			creationQueue->push_back(c);
@@ -112,32 +116,17 @@ void ChunkThread::updateDeletionQueue() {
 			}
 			if (!neighborProcessing) {
 				c->state = Chunk::DELETING;
-				Chunk** neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
-				for (int i = 0; i < 4; i++) {
-					neighbors[i] = c->neighbors[i];
-				}
+				chunkManagerMutex->lock();
 				cm->freeVAOs.push(c->vaoIndex);
-				delete c;
-				for (int i = 0; i < 4; i++) {
-					if (neighbors[i] != NULL) {
-						neighbors[i]->reorderBlocks();
-						neighbors[i]->updateVAO();
+				for (int i = 0; i < cm->chunks->size(); i++) {
+					if ((*(cm->chunks))[i] == c) {
+						cm->chunks->erase(cm->chunks->begin() + i);
+						break;
 					}
 				}
-				if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
-					neighbors[CHUNK_NEIGHBOR_LEFT]->neighbors[CHUNK_NEIGHBOR_RIGHT] = NULL;
-				}
-				if (neighbors[CHUNK_NEIGHBOR_RIGHT] != NULL) {
-					neighbors[CHUNK_NEIGHBOR_RIGHT]->neighbors[CHUNK_NEIGHBOR_LEFT] = NULL;
-				}
-				if (neighbors[CHUNK_NEIGHBOR_FRONT] != NULL) {
-					neighbors[CHUNK_NEIGHBOR_FRONT]->neighbors[CHUNK_NEIGHBOR_BACK] = NULL;
-				}
-				if (neighbors[CHUNK_NEIGHBOR_BACK] != NULL) {
-					neighbors[CHUNK_NEIGHBOR_BACK]->neighbors[CHUNK_NEIGHBOR_FRONT] = NULL;
-				}
+				chunkManagerMutex->unlock();
+				delete c;
 			}
-			c->state = Chunk::DELETING;
 		}
 	}
 	else {

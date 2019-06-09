@@ -1,4 +1,2 @@
-﻿  ChunkThread.cpp
-c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(26): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(88): warning C4018: '<': signed/unsigned mismatch
+﻿  Chunk.cpp
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

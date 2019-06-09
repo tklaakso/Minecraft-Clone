@@ -16,6 +16,9 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex)
 	prevBlocks = NULL;
 	blockChanges = 0;
 	neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
+	for (int i = 0; i < 4; i++) {
+		neighbors[i] = NULL;
+	}
 }
 
 Chunk::Chunk(int x, int y) {
@@ -27,6 +30,9 @@ Chunk::Chunk(int x, int y) {
 	prevBlocks = NULL;
 	blockChanges = 0;
 	neighbors = (Chunk**)malloc(sizeof(Chunk*) * 4);
+	for (int i = 0; i < 4; i++) {
+		neighbors[i] = NULL;
+	}
 }
 
 void Chunk::setVAO(ChunkVAO* vao, int vaoIndex) {
@@ -98,7 +104,7 @@ void Chunk::updateNeighbors() {
 			blocks[i]->neighbors[BLOCK_NEIGHBOR_UP] = getBlock(gx, gy + 1, gz);
 			blocks[i]->neighbors[BLOCK_NEIGHBOR_DOWN] = getBlock(gx, gy - 1, gz);
 		}
-		if (bx == 0 && false) {
+		if (bx == 0) {
 			if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_LEFT]->getBlock(gx - 1, gy, gz);
 				if (b != NULL) {
@@ -122,7 +128,7 @@ void Chunk::updateNeighbors() {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT] = getBlock(gx - 1, gy, gz);
 			}
 		}
-		if (bx == CHUNK_WIDTH - 1 && false) {
+		if (bx == CHUNK_WIDTH - 1) {
 			if (neighbors[CHUNK_NEIGHBOR_RIGHT] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_RIGHT]->getBlock(gx + 1, gy, gz);
 				if (b != NULL) {
@@ -146,7 +152,7 @@ void Chunk::updateNeighbors() {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_RIGHT] = getBlock(gx + 1, gy, gz);
 			}
 		}
-		if (bz == 0 && false) {
+		if (bz == 0) {
 			if (neighbors[CHUNK_NEIGHBOR_FRONT] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_FRONT]->getBlock(gx, gy, gz - 1);
 				if (b != NULL) {
@@ -170,7 +176,7 @@ void Chunk::updateNeighbors() {
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_FRONT] = getBlock(gx, gy, gz - 1);
 			}
 		}
-		if (bz == CHUNK_WIDTH - 1 && false) {
+		if (bz == CHUNK_WIDTH - 1) {
 			if (neighbors[CHUNK_NEIGHBOR_BACK] != NULL) {
 				Block* b = neighbors[CHUNK_NEIGHBOR_BACK]->getBlock(gx, gy, gz + 1);
 				if (b != NULL) {
@@ -224,6 +230,9 @@ void Chunk::updateNeighbors() {
 }
 
 void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool update) {
+	if (state == Chunk::WAITING_FOR_GENERATE || state == Chunk::GENERATING || state == Chunk::DELETING) {
+		return;
+	}
 	int localX = globalX - x * CHUNK_WIDTH;
 	int localZ = globalZ - y * CHUNK_WIDTH;
 	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
@@ -323,6 +332,9 @@ bool Chunk::blockInChunk(int globalX, int globalY, int globalZ) {
 }
 
 Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
+	if (state == Chunk::WAITING_FOR_GENERATE || state == Chunk::GENERATING || state == Chunk::DELETING) {
+		return NULL;
+	}
 	int localX = globalX - x * CHUNK_WIDTH;
 	int localZ = globalZ - y * CHUNK_WIDTH;
 	if (blocks != prevBlocks) {
@@ -331,6 +343,7 @@ Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
 		//std::cout << "Block " << blockChanges << ": " << blocks << ", " << blockCoordsToIndex(localX, globalY, localZ) << std::endl;
 	}
 	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
+		this->state;
 		return blocks[blockCoordsToIndex(localX, globalY, localZ)];
 	}
 	return NULL;
@@ -395,6 +408,18 @@ void Chunk::render() {
 Chunk::~Chunk()
 {
 	chunksInPlay--;
+	if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
+		neighbors[CHUNK_NEIGHBOR_LEFT]->neighbors[CHUNK_NEIGHBOR_RIGHT] = NULL;
+	}
+	if (neighbors[CHUNK_NEIGHBOR_RIGHT] != NULL) {
+		neighbors[CHUNK_NEIGHBOR_RIGHT]->neighbors[CHUNK_NEIGHBOR_LEFT] = NULL;
+	}
+	if (neighbors[CHUNK_NEIGHBOR_FRONT] != NULL) {
+		neighbors[CHUNK_NEIGHBOR_FRONT]->neighbors[CHUNK_NEIGHBOR_BACK] = NULL;
+	}
+	if (neighbors[CHUNK_NEIGHBOR_BACK] != NULL) {
+		neighbors[CHUNK_NEIGHBOR_BACK]->neighbors[CHUNK_NEIGHBOR_FRONT] = NULL;
+	}
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
   	if (blocks[i] != NULL) {
 			if (blocks[i]->neighbors[BLOCK_NEIGHBOR_LEFT] != NULL) {
@@ -422,6 +447,12 @@ Chunk::~Chunk()
 				blocks[i]->neighbors[BLOCK_NEIGHBOR_DOWN]->updateNeighbors();
 			}
 			delete blocks[i];
+		}
+	}
+	for (int i = 0; i < 4; i++) {
+		if (neighbors[i] != NULL) {
+			neighbors[i]->reorderBlocks();
+			neighbors[i]->updateVAO();
 		}
 	}
 	free(blocks);

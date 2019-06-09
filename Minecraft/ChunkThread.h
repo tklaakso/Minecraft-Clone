@@ -11,7 +11,7 @@ class ChunkThread
 {
 public:
 	ChunkThread(ChunkManager *cm, std::vector<Chunk*>* creationQueue, std::vector<Chunk*>* deletionQueue);
-	void initialize(std::mutex* chunkMutex);
+	void initialize(std::mutex* chunkMutex, std::mutex* chunkManagerMutex);
 	void updateCreationQueue();
 	void updateDeletionQueue();
 	void exit();
@@ -23,6 +23,7 @@ private:
 	ChunkManager* cm;
 	std::mutex createDeleteMutex;
 	std::mutex* chunkMutex;
+	std::mutex* chunkManagerMutex;
 	std::mutex mtx;
 	std::condition_variable cond;
 	std::thread thread;

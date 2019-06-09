@@ -10,6 +10,7 @@ public:
 	void deleteChunk(Chunk* c);
 	void exit();
 	std::mutex chunkMutex;
+	std::mutex chunkManagerMutex;
 	~ChunkThreadPool();
 private:
 	ChunkThread** threads;
