@@ -12,6 +12,7 @@
 #include "Math.h"
 #include "World.h"
 #include "Input.h"
+#include "Structure.h"
 #include <GLFW/glfw3.h>
 
 using namespace std;
@@ -42,6 +43,7 @@ int main() {
 
 	Block::initialize(shader);
 	Input::initialize();
+	Structure::Structure::initStructures();
 
 	World* world = new World();
 	/*for (int x = 0; x < 50; x++) {

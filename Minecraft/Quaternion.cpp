@@ -32,7 +32,7 @@ Quaternion Quaternion::angleAxis(glm::vec3 axis, float angle) {
 	float y = axis.y * factor;
 	float z = axis.z * factor;
 	float w = glm::cos(glm::radians(angle / 2.0f));
-	return Quaternion(x, y, z, w).normalized();
+	return Quaternion(x, y, z, w);
 }
 
 Quaternion Quaternion::operator*(Quaternion q) {

@@ -8,6 +8,19 @@ std::string toString(int i) {
 	return outString;
 }
 
+std::vector<std::string> split(std::string s, std::string delim) {
+	std::vector<std::string> vs;
+	int start = 0;
+	int end = s.find(delim);
+	while (end != std::string::npos) {
+		vs.push_back(s.substr(start, end - start));
+		start = end + delim.length();
+		end = s.find(delim, start);
+	}
+	vs.push_back(s.substr(start, end));
+	return vs;
+}
+
 int blockCoordsToIndex(int bx, int by, int bz) {
 	return bx + bz * CHUNK_WIDTH + by * CHUNK_WIDTH * CHUNK_WIDTH;
 }

@@ -9,6 +9,8 @@
 
 std::string toString(int i);
 
+std::vector<std::string> split(std::string s, std::string delim);
+
 int blockCoordsToIndex(int bx, int by, int bz);
 
 BlockCoords indexToBlockCoords(int index);

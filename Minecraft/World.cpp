@@ -202,12 +202,14 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 
 void World::render() {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
-	std::cout << Chunk::chunksInPlay << std::endl;
+	//std::cout << Chunk::chunksInPlay << std::endl;
+	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		if ((*(cm->chunks))[i]->state == Chunk::RENDERING) {
 			(*(cm->chunks))[i]->render();
 		}
 	}
+	pool->chunkManagerMutex.unlock();
 }
 
 void World::makeChunk(int x, int y) {

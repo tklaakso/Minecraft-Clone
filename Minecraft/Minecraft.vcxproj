@@ -138,8 +138,12 @@
     <ClCompile Include="Math.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Quaternion.cpp" />
+    <ClCompile Include="Region.cpp" />
+    <ClCompile Include="RegionManager.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="stb_image.cpp" />
+    <ClCompile Include="Structure.cpp" />
+    <ClCompile Include="StructureTree.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Util.cpp" />
     <ClCompile Include="World.cpp" />
@@ -162,8 +166,12 @@
     <ClInclude Include="Math.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Quaternion.h" />
+    <ClInclude Include="Region.h" />
+    <ClInclude Include="RegionManager.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="stb_image.h" />
+    <ClInclude Include="Structure.h" />
+    <ClInclude Include="StructureTree.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="World.h" />
