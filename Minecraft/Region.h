@@ -3,6 +3,7 @@
 #include <vector>
 #include "Block.h"
 #include "Structure.h"
+#include "FastNoise.h"
 
 class Region
 {

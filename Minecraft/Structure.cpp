@@ -1,105 +1,121 @@
 #include "Structure.h"
+#include "StructureTree.h"
 
-std::vector<Structure*>* Structure::structures = new std::vector<Structure*>();
+namespace Structure {
 
-Structure::Structure(std::string filePath)
-{
-	std::ifstream file;
-	file.open(filePath);
-	std::string contents;
-	while (!file.eof()) {
-		file >> contents;
-	}
-	std::vector<std::string> lines = split(contents, "\n");
-	for (int i = 1; i < lines.size(); i++) {
-		std::vector<std::string> params = split(lines[i], ",");
-		int id = std::stoi(params[0]);
-		int x = std::stoi(params[1]);
-		int y = std::stoi(params[2]);
-		int z = std::stoi(params[3]);
-		if (i == 1) {
-			minx = maxx = x;
-			miny = maxy = y;
-			minz = maxz = z;
-		}
-		else {
-			if (x < minx) {
-				minx = x;
-			}
-			if (x > maxx) {
-				maxx = x;
-			}
-			if (y < miny) {
-				miny = y;
-			}
-			if (y > maxy) {
-				maxy = y;
-			}
-			if (z < minz) {
-				minz = z;
-			}
-			if (z > maxz) {
-				maxz = z;
+	std::vector<Structure*>* Structure::structures = new std::vector<Structure*>();
+
+	Structure::Structure(std::string filePath)
+	{
+		std::ifstream file;
+		file.open(filePath);
+		std::vector<std::string> lines;
+		while (!file.eof()) {
+			std::string temp;
+			file >> temp;
+			if (temp.length() > 0) {
+				lines.push_back(temp);
 			}
 		}
-		Block* b = new Block(x, y, z);
-		b->type = id;
-		blocks.push_back(b);
+		for (int i = 1; i < lines.size(); i++) {
+			std::vector<std::string> params = split(lines[i], ",");
+			int id = std::stoi(params[0]);
+			int x = std::stoi(params[1]);
+			int y = std::stoi(params[2]);
+			int z = std::stoi(params[3]);
+			if (i == 1) {
+				minx = maxx = x;
+				miny = maxy = y;
+				minz = maxz = z;
+			}
+			else {
+				if (x < minx) {
+					minx = x;
+				}
+				if (x > maxx) {
+					maxx = x;
+				}
+				if (y < miny) {
+					miny = y;
+				}
+				if (y > maxy) {
+					maxy = y;
+				}
+				if (z < minz) {
+					minz = z;
+				}
+				if (z > maxz) {
+					maxz = z;
+				}
+			}
+			Block* b = new Block(x, y, z);
+			b->type = id;
+			blocks.push_back(b);
+		}
+		file.close();
 	}
-	file.close();
-}
 
-std::vector<Structure*>* Structure::getStructureList() {
-	return structures;
-}
-
-void Structure::initStructures() {
-	//structures.push_back(new StructureTree("res/tree.struct"));
-}
-
-void Structure::setSpawnInterval(int spawnInterval) {
-	assert(spawnInterval > 0 && spawnInterval < REGION_WIDTH && REGION_WIDTH % spawnInterval == 0);
-	this->spawnInterval = spawnInterval;
-}
-
-void Structure::setAttemptsPerInterval(int attemptsPerInterval) {
-	assert(attemptsPerInterval > 0);
-	this->attemptsPerInterval = attemptsPerInterval;
-}
-
-std::vector<Block*> Structure::generate(int x, int y, int z) {
-	std::vector<Block*> generated;
-	for (int i = 0; i < blocks.size(); i++) {
-		Block* b = blocks[i];
-		Block* gb = new Block(b->x + x, b->y + y, b->z + z);
-		gb->type = b->type;
-		generated.push_back(gb);
+	std::vector<Structure*>* Structure::getStructureList() {
+		return structures;
 	}
-	return generated;
-}
 
-int Structure::getMinX(){
-	return minx;
-}
-int Structure::getMaxX(){
-	return maxx;
-}
-int Structure::getMinZ(){
-	return minz;
-}
-int Structure::getMaxZ(){
-	return maxz;
-}
-int Structure::getMinY(){
-	return miny;
-}
-int Structure::getMaxY() {
-	return maxy;
-}
-
-Structure::~Structure()
-{
-	for (int i = 0; i < blocks.size(); i++) {
-		delete blocks[i];
+	void Structure::initStructures() {
+		structures->push_back(new StructureTree("Structures/tree.struct"));
 	}
-}
+
+	void Structure::setSpawnInterval(int spawnInterval) {
+		assert(spawnInterval > 0 && spawnInterval < REGION_WIDTH && REGION_WIDTH % spawnInterval == 0);
+		this->spawnInterval = spawnInterval;
+	}
+
+	void Structure::setAttemptsPerInterval(int attemptsPerInterval) {
+		assert(attemptsPerInterval > 0);
+		this->attemptsPerInterval = attemptsPerInterval;
+	}
+
+	std::vector<Block*> Structure::generate(int x, int y, int z) {
+		std::vector<Block*> generated;
+		for (int i = 0; i < blocks.size(); i++) {
+			Block* b = blocks[i];
+			Block* gb = new Block(b->x + x, b->y + y, b->z + z);
+			gb->type = b->type;
+			generated.push_back(gb);
+		}
+		return generated;
+	}
+
+	int Structure::getSpawnInterval() {
+		return spawnInterval;
+	}
+
+	int Structure::getSpawnAttemptsPerInterval() {
+		return attemptsPerInterval;
+	}
+
+	int Structure::getMinX() {
+		return minx;
+	}
+	int Structure::getMaxX() {
+		return maxx;
+	}
+	int Structure::getMinZ() {
+		return minz;
+	}
+	int Structure::getMaxZ() {
+		return maxz;
+	}
+	int Structure::getMinY() {
+		return miny;
+	}
+	int Structure::getMaxY() {
+		return maxy;
+	}
+
+	Structure::~Structure()
+	{
+		for (int i = 0; i < blocks.size(); i++) {
+			delete blocks[i];
+		}
+	}
+
+};

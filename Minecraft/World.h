@@ -8,6 +8,7 @@
 #include "ChunkManager.h"
 #include "Util.h"
 #include "ChunkThreadPool.h"
+#include "RegionManager.h"
 
 class World
 {
@@ -33,6 +34,7 @@ private:
 	int playerChunkX, playerChunkY;
 	ChunkThreadPool* pool;
 	ChunkManager* cm;
+	RegionManager* rm;
 	static ChunkCoords blockToChunkCoords(int bx, int bz);
 };
 

@@ -4,6 +4,7 @@
 World::World()
 {
 	cm = new ChunkManager();
+	rm = new RegionManager();
 	pool = new ChunkThreadPool(cm, 1);
 	renderDistance = 8;
 }
