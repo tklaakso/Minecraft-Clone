@@ -15,11 +15,13 @@ Block** WorldGenerator::getChunkBlocks(int cx, int cy) {
 	}
 	std::vector<Block*>* structureBlocks = World::rm->getChunkBlocks(cx, cy);
 	if (structureBlocks != NULL) {
+		Block* b = (*structureBlocks)[0];
 		for (int i = 0; i < structureBlocks->size(); i++) {
 			Block* b = (*structureBlocks)[i];
 			assert(b->x >= cx * CHUNK_WIDTH && b->x < (cx + 1) * CHUNK_WIDTH);
 			assert(b->z >= cy * CHUNK_WIDTH && b->z < (cy + 1) * CHUNK_WIDTH);
-			int index = blockCoordsToIndex(b->x, b->y, b->z);
+			int index = blockCoordsToIndex(b->x - cx * CHUNK_WIDTH, b->y, b->z - cy * CHUNK_WIDTH);
+			b->translationIndex = index;
 			blocks[index] = b;
 		}
 		delete structureBlocks;
