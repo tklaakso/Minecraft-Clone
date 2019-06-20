@@ -1,5 +1,6 @@
 #include "Structure.h"
 #include "StructureTree.h"
+#include "Util.h"
 
 namespace Structure {
 

@@ -14,6 +14,7 @@ public:
 	Block(int x, int y, int z);
 	static void initialize(Shader* shader);
 	static void deInitialize();
+	Block* clone();
 	void updateNeighbors();
 	static unsigned int texture;
 	int translationIndex;

@@ -47,6 +47,12 @@ void Block::deInitialize() {
 
 }
 
+Block* Block::clone() {
+	Block* cloned = new Block(x, y, z);
+	cloned->type = type;
+	return cloned;
+}
+
 void Block::updateNeighbors() {
 	for (int i = 0; i < 6; i++) {
 		if (neighbors[i] == NULL) {

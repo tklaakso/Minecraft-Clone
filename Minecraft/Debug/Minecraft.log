@@ -1,5 +1,7 @@
-﻿  Region.cpp
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(16): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(23): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(24): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+﻿  WorldGenerator.cpp
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(18): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(29): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(29): warning C4244: 'initializing': conversion from 'FN_DECIMAL' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(52): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(52): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

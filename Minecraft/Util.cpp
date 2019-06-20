@@ -46,3 +46,16 @@ Chunk* findChunkWithCoords(std::vector<Chunk*>* chunks, ChunkCoords* coords, int
 	}
 	return NULL;
 }
+
+ChunkCoords blockToChunkCoords(int bx, int bz) {
+	int chunkX = (int)floor((double)bx / CHUNK_WIDTH);
+	int chunkZ = (int)floor((double)bz / CHUNK_WIDTH);
+	int localX = bx - chunkX * CHUNK_WIDTH;
+	int localZ = bz - chunkZ * CHUNK_WIDTH;
+	return ChunkCoords(chunkX, chunkZ, localX, localZ);
+}
+
+RegionCoords chunkToRegionCoords(int cx, int cz) {
+	RegionCoords r((int)floor((double)cx / REGION_WIDTH_CHUNKS), (int)floor((double)cz / REGION_WIDTH_CHUNKS));
+	return r;
+}

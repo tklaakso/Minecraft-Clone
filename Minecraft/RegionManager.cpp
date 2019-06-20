@@ -1,14 +1,23 @@
 #include "RegionManager.h"
-
-
+#include "Util.h"
 
 RegionManager::RegionManager()
 {
-	Region* region = new Region(0, 0);
-	region->generate();
-	regions.push_back(region);
 }
 
+std::vector<Block*>* RegionManager::getChunkBlocks(int cx, int cz) {
+	RegionCoords region = chunkToRegionCoords(cx, cz);
+	for (int i = 0; i < regions.size(); i++) {
+		if (regions[i]->getX() == region.x && regions[i]->getZ() == region.z) {
+			return regions[i]->getChunkBlocks(cx, cz);
+		}
+	}
+	return NULL;
+}
+
+void RegionManager::addRegion(Region* region) {
+	regions.push_back(region);
+}
 
 RegionManager::~RegionManager()
 {

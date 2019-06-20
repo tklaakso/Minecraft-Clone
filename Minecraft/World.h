@@ -30,11 +30,10 @@ public:
 	bool chunkExists(int x, int y);
 	void updateLoadedChunks();
 	int renderDistance;
+	static RegionManager* rm;
 private:
 	int playerChunkX, playerChunkY;
 	ChunkThreadPool* pool;
 	ChunkManager* cm;
-	RegionManager* rm;
-	static ChunkCoords blockToChunkCoords(int bx, int bz);
 };
 

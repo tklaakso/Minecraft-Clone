@@ -2,7 +2,6 @@
 
 #include <vector>
 #include "Block.h"
-#include "Util.h"
 
 namespace Structure {
 	class Structure

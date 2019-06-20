@@ -1,11 +1,15 @@
 #include "World.h"
 #include "Constants.h"
 
+RegionManager* World::rm = new RegionManager();
+
 World::World()
 {
 	cm = new ChunkManager();
-	rm = new RegionManager();
 	pool = new ChunkThreadPool(cm, 1);
+	Region* region = new Region(0, 0);
+	region->generate();
+	rm->addRegion(region);
 	renderDistance = 8;
 }
 
@@ -313,14 +317,6 @@ void World::deleteChunk(int x, int y) {
 	if (c != NULL) {
 		pool->deleteChunk(c);
 	}
-}
-
-ChunkCoords World::blockToChunkCoords(int bx, int bz) {
-	int chunkX = bx / CHUNK_WIDTH;
-	int chunkZ = bz / CHUNK_WIDTH;
-	int localX = bx - chunkX * CHUNK_WIDTH;
-	int localZ = bz - chunkZ * CHUNK_WIDTH;
-	return ChunkCoords(chunkX, chunkZ, localX, localZ);
 }
 
 World::~World()
