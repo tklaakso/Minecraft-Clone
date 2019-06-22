@@ -112,6 +112,10 @@ namespace Structure {
 		return maxy;
 	}
 
+	StructureData Structure::getData(int x, int y, int z) {
+		return StructureData(minx + x, miny + y, minz + z, maxx - minx, maxy - miny, maxz - minz);
+	}
+
 	Structure::~Structure()
 	{
 		for (int i = 0; i < blocks.size(); i++) {

@@ -7,9 +7,43 @@ Region::Region(int x, int z)
 	this->z = z;
 	for (int i = 0; i < REGION_WIDTH_CHUNKS; i++) {
 		for (int j = 0; j < REGION_WIDTH_CHUNKS; j++) {
-			blocks[i][j] = std::vector<Block*>();
+			blocks[i][j] = new std::vector<Block*>();
+			structureMap[i][j] = new std::vector<StructureData>();
 		}
 	}
+}
+
+std::vector<std::vector<StructureData>*> Region::getOverlapping(StructureData d) {
+	std::vector<std::vector<StructureData>*> overlapping;
+	ChunkCoords min = blockToChunkCoords(d.getX(), d.getZ());
+	ChunkCoords max = blockToChunkCoords(d.getX() + d.getWidth(), d.getZ() + d.getLength());
+	int chunkXLocalMin = min.chunkX - x * REGION_WIDTH_CHUNKS;
+	int chunkZLocalMin = min.chunkZ - z * REGION_WIDTH_CHUNKS;
+	int chunkXLocalMax = max.chunkX - x * REGION_WIDTH_CHUNKS;
+	int chunkZLocalMax = max.chunkZ - z * REGION_WIDTH_CHUNKS;
+	assert(chunkXLocalMin >= 0 && chunkXLocalMin < REGION_WIDTH_CHUNKS);
+	assert(chunkXLocalMax >= 0 && chunkXLocalMax < REGION_WIDTH_CHUNKS);
+	assert(chunkZLocalMin >= 0 && chunkZLocalMin < REGION_WIDTH_CHUNKS);
+	assert(chunkZLocalMax >= 0 && chunkZLocalMax < REGION_WIDTH_CHUNKS);
+	for (int cx = chunkXLocalMin; cx <= chunkXLocalMax; cx++) {
+		for (int cz = chunkZLocalMin; cz <= chunkZLocalMax; cz++) {
+			overlapping.push_back(structureMap[cx][cz]);
+		}
+	}
+	return overlapping;
+}
+
+bool Region::canCreate(StructureData d) {
+	std::vector<std::vector<StructureData>*> overlapping = getOverlapping(d);
+	for (int i = 0; i < overlapping.size(); i++) {
+		std::vector<StructureData>* str = overlapping[i];
+		for (int j = 0; j < str->size(); j++) {
+			if (d.intersects((*str)[j])) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 void Region::generate() {
@@ -28,37 +62,22 @@ void Region::generate() {
 					int noiseBlockZ = (int)floor(noiseValZ * (interval + (str->getMinZ() - str->getMaxZ()))) + j - str->getMinZ() + z * REGION_WIDTH;
 					int noiseBlockY = WorldGenerator::getHeight(noiseBlockX, noiseBlockZ);
 					if (str->canSpawn(noiseBlockX, noiseBlockZ)) {
-						std::vector<Block*> bl = str->generate(noiseBlockX, noiseBlockY, noiseBlockZ);
-						bool blockExists = false;
-						for (int l = 0; l < bl.size(); l++) {
-							Block* b = bl[l];
-							ChunkCoords c = blockToChunkCoords(b->x, b->z);
-							int regionChunkX = c.chunkX - x * REGION_WIDTH_CHUNKS;
-							int regionChunkZ = c.chunkZ - z * REGION_WIDTH_CHUNKS;
-							assert(regionChunkX >= 0 && regionChunkX < REGION_WIDTH_CHUNKS);
-							assert(regionChunkZ >= 0 && regionChunkZ < REGION_WIDTH_CHUNKS);
-							std::vector<Block*> existingBlocks = blocks[regionChunkX][regionChunkZ];
-							for (int m = 0; m < existingBlocks.size(); m++) {
-								if (existingBlocks[m]->x == b->x && existingBlocks[m]->y == b->y && existingBlocks[m]->z == b->z) {
-									blockExists = true;
-									break;
-								}
+						StructureData data = str->getData(noiseBlockX, noiseBlockY, noiseBlockZ);
+						if (canCreate(data)) {
+							std::vector<Block*> bl = str->generate(noiseBlockX, noiseBlockY, noiseBlockZ);
+							for (int l = 0; l < bl.size(); l++) {
+								Block* b = bl[l];
+								ChunkCoords c = blockToChunkCoords(b->x, b->z);
+								int regionChunkX = c.chunkX - x * REGION_WIDTH_CHUNKS;
+								int regionChunkZ = c.chunkZ - z * REGION_WIDTH_CHUNKS;
+								assert(regionChunkX >= 0 && regionChunkX < REGION_WIDTH_CHUNKS);
+								assert(regionChunkZ >= 0 && regionChunkZ < REGION_WIDTH_CHUNKS);
+								blocks[regionChunkX][regionChunkZ]->push_back(b);
 							}
-							if (blockExists) {
-								break;
+							std::vector<std::vector<StructureData>*> overlapping = getOverlapping(data);
+							for (int l = 0; l < overlapping.size(); l++) {
+								overlapping[l]->push_back(data);
 							}
-						}
-						if (blockExists) {
-							continue;
-						}
-						for (int l = 0; l < bl.size(); l++) {
-							Block* b = bl[l];
-							ChunkCoords c = blockToChunkCoords(b->x, b->z);
-							int regionChunkX = c.chunkX - x * REGION_WIDTH_CHUNKS;
-							int regionChunkZ = c.chunkZ - z * REGION_WIDTH_CHUNKS;
-							assert(regionChunkX >= 0 && regionChunkX < REGION_WIDTH_CHUNKS);
-							assert(regionChunkZ >= 0 && regionChunkZ < REGION_WIDTH_CHUNKS);
-							blocks[regionChunkX][regionChunkZ].push_back(b);
 						}
 					}
 				}
@@ -81,8 +100,8 @@ std::vector<Block*>* Region::getChunkBlocks(int cx, int cz) {
 	assert(chunkX >= 0 && chunkX < REGION_WIDTH_CHUNKS);
 	assert(chunkZ >= 0 && chunkZ < REGION_WIDTH_CHUNKS);
 	std::vector<Block*>* b = new std::vector<Block*>();
-	for (int i = 0; i < blocks[chunkX][chunkZ].size(); i++) {
-		b->push_back(blocks[chunkX][chunkZ][i]->clone());
+	for (int i = 0; i < blocks[chunkX][chunkZ]->size(); i++) {
+		b->push_back(blocks[chunkX][chunkZ]->at(i)->clone());
 	}
 	return b;
 }
@@ -91,9 +110,11 @@ Region::~Region()
 {
 	for (int i = 0; i < REGION_WIDTH_CHUNKS; i++) {
 		for (int j = 0; j < REGION_WIDTH_CHUNKS; j++) {
-			for (int k = 0; k < blocks[i][j].size(); k++) {
-				delete blocks[i][j][k];
+			for (int k = 0; k < blocks[i][j]->size(); k++) {
+				delete blocks[i][j]->at(k);
 			}
+			delete blocks[i][j];
+			delete structureMap[i][j];
 		}
 	}
 }

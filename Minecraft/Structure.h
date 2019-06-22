@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Block.h"
+#include "StructureData.h"
 
 namespace Structure {
 	class Structure
@@ -20,6 +21,7 @@ namespace Structure {
 		int getMaxY();
 		int getSpawnInterval();
 		int getSpawnAttemptsPerInterval();
+		StructureData getData(int x, int y, int z);
 		~Structure();
 	protected:
 		void setSpawnInterval(int spawnInterval);
