@@ -1,5 +1,7 @@
 #include "Structure.h"
 #include "StructureTree.h"
+#include "StructureCactus.h"
+#include "StructureSandHut.h"
 #include "Util.h"
 
 namespace Structure {
@@ -61,6 +63,8 @@ namespace Structure {
 	}
 
 	void Structure::initStructures() {
+		structures->push_back(new StructureSandHut("Structures/sand_hut.struct"));
+		structures->push_back(new StructureCactus("Structures/cactus.struct"));
 		structures->push_back(new StructureTree("Structures/tree.struct"));
 	}
 

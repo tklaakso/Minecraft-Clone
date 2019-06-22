@@ -85,7 +85,7 @@ const int BLOCK_INDICES[] = {
 		20, 23, 22
 };
 
-const int NUM_TEXTURES = 12;
+const int NUM_TEXTURES = 15;
 const int BLOCK_TEXTURE_WIDTH = 48;
 const int BLOCK_TEXTURE_HEIGHT = 48;
 
@@ -94,7 +94,7 @@ const int CHUNK_HEIGHT = 128;
 const int CHUNK_WIDTH = 16;
 const int BLOCKS_PER_CHUNK = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
 
-const int REGION_WIDTH = 240;
+const int REGION_WIDTH = 256;
 const int REGION_WIDTH_CHUNKS = REGION_WIDTH / CHUNK_WIDTH;
 
 const int REGION_GENERATION_DISTANCE = 1;
@@ -126,6 +126,12 @@ const int BLOCK_IRON_ORE = 8;
 const int BLOCK_DIAMOND_ORE = 9;
 const int BLOCK_COAL_ORE = 10;
 const int BLOCK_LOG = 11;
+const int BLOCK_SAND = 12;
+const int BLOCK_CACTUS = 13;
+const int BLOCK_SANDSTONE = 14;
+
+const int BIOME_PLAINS = 0;
+const int BIOME_DESERT = 1;
 
 const float MOUSE_SENSITIVITY = 0.1f;
 

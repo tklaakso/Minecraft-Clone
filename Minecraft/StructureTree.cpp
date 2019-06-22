@@ -1,4 +1,5 @@
 #include "StructureTree.h"
+#include "WorldGenerator.h"
 
 namespace Structure {
 
@@ -9,7 +10,7 @@ namespace Structure {
 	}
 
 	bool StructureTree::canSpawn(int x, int z) {
-		return true;
+		return WorldGenerator::getBiome(x, z) == BIOME_PLAINS;
 	}
 
 	StructureTree::~StructureTree()

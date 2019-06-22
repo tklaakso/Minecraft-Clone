@@ -10,6 +10,9 @@ public:
 	static Block** getChunkBlocks(int cx, int cy);
 	static int getHeight(int x, int z);
 	static FastNoise* noise;
+	static int getBiome(int x, int z);
 	~WorldGenerator();
+private:
+	static float temperatureMap(int x, int z);
 };
 

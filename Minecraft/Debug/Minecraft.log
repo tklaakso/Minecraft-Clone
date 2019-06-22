@@ -1,6 +1,5 @@
-﻿  World.cpp
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(142): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(164): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(242): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(266): warning C4018: '<': signed/unsigned mismatch
+﻿  Structure.cpp
+c:\users\troy\source\repos\minecraft\minecraft\structure.cpp(23): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\structure.cpp(83): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\structure.cpp(125): warning C4018: '<': signed/unsigned mismatch
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe
