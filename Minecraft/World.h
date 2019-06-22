@@ -25,10 +25,14 @@ public:
 	void reorderBlock(Block* block, Chunk* suspect);
 	void updateChunkVAOs();
 	void makeChunk(int x, int y);
+	void makeRegion(int x, int y);
 	void deleteChunk(int x, int y);
+	void deleteRegion(int x, int y);
 	void updatePlayerChunkPosition(int chunkX, int chunkY);
 	bool chunkExists(int x, int y);
+	bool regionExists(int x, int y);
 	void updateLoadedChunks();
+	void updateLoadedRegions();
 	int renderDistance;
 	static RegionManager* rm;
 private:

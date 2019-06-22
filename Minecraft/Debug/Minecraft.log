@@ -1,11 +1,6 @@
-﻿  Region.cpp
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(38): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(40): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(52): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(59): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(60): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(68): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(78): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(103): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\region.cpp(113): warning C4018: '<': signed/unsigned mismatch
+﻿  World.cpp
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(142): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(164): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(242): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(266): warning C4018: '<': signed/unsigned mismatch
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe
