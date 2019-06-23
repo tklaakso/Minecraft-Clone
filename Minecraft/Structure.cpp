@@ -69,7 +69,7 @@ namespace Structure {
 	}
 
 	void Structure::setSpawnInterval(int spawnInterval) {
-		assert(spawnInterval > 0 && spawnInterval < REGION_WIDTH && REGION_WIDTH % spawnInterval == 0);
+		assert(spawnInterval > 0 && spawnInterval <= REGION_WIDTH && REGION_WIDTH % spawnInterval == 0);
 		this->spawnInterval = spawnInterval;
 	}
 

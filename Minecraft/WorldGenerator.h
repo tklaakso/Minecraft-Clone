@@ -2,6 +2,8 @@
 #include "Block.h"
 #include "FastNoise.h"
 #include "RegionManager.h"
+#include "BiomeMap.h"
+#include "BiomeHeightmapOverworld.h"
 
 class WorldGenerator
 {
@@ -13,6 +15,7 @@ public:
 	static int getBiome(int x, int z);
 	~WorldGenerator();
 private:
-	static float temperatureMap(int x, int z);
+	static BiomeMap* biomeMap;
+	static BiomeHeightmapOverworld* heightMap;
 };
 

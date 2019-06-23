@@ -108,6 +108,15 @@
     <ClCompile Include="StructureSandHut.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BiomeHeightmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BiomeHeightmapOverworld.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BiomeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -198,6 +207,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StructureSandHut.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BiomeHeightmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BiomeHeightmapOverworld.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BiomeMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

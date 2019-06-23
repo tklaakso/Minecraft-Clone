@@ -5,7 +5,7 @@ namespace Structure {
 
 	StructureSandHut::StructureSandHut(std::string filePath) : Structure(filePath)
 	{
-		setSpawnInterval(64);
+		setSpawnInterval(512);
 		setAttemptsPerInterval(1);
 	}
 

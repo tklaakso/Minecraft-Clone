@@ -34,4 +34,8 @@ public:
 
 float clamp(float f, float low, float high);
 
+float lerp(float a, float b, float t);
+
+float fullMod(int a, int b);
+
 #endif

@@ -10,7 +10,7 @@ namespace Structure {
 	}
 
 	bool StructureTree::canSpawn(int x, int z) {
-		return WorldGenerator::getBiome(x, z) == BIOME_PLAINS;
+		return WorldGenerator::getBiome(x, z) == BIOME_FOREST;
 	}
 
 	StructureTree::~StructureTree()

@@ -94,7 +94,7 @@ const int CHUNK_HEIGHT = 128;
 const int CHUNK_WIDTH = 16;
 const int BLOCKS_PER_CHUNK = CHUNK_WIDTH * CHUNK_WIDTH * CHUNK_HEIGHT;
 
-const int REGION_WIDTH = 256;
+const int REGION_WIDTH = 1024;
 const int REGION_WIDTH_CHUNKS = REGION_WIDTH / CHUNK_WIDTH;
 
 const int REGION_GENERATION_DISTANCE = 1;
@@ -130,9 +130,14 @@ const int BLOCK_SAND = 12;
 const int BLOCK_CACTUS = 13;
 const int BLOCK_SANDSTONE = 14;
 
-const int BIOME_PLAINS = 0;
+const int BIOME_FOREST = 0;
 const int BIOME_DESERT = 1;
+const int BIOME_JUNGLE = 2;
+const int BIOME_PLAINS = 3;
 
 const float MOUSE_SENSITIVITY = 0.1f;
+
+const float BIOME_HEIGHT_BLEND = 0.02f;
+const float BIOME_SPARSITY = 5.0f;
 
 #endif

@@ -122,6 +122,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\..\Desktop\glad\src\glad.c" />
+    <ClCompile Include="BiomeHeightmap.cpp" />
+    <ClCompile Include="BiomeHeightmapOverworld.cpp" />
+    <ClCompile Include="BiomeMap.cpp" />
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockCoords.cpp" />
     <ClCompile Include="Camera.cpp" />
@@ -154,6 +157,9 @@
     <ClCompile Include="WorldGenerator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BiomeHeightmap.h" />
+    <ClInclude Include="BiomeHeightmapOverworld.h" />
+    <ClInclude Include="BiomeMap.h" />
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlockCoords.h" />
     <ClInclude Include="Camera.h" />

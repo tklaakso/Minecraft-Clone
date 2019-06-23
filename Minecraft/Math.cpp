@@ -146,4 +146,11 @@ float clamp(float f, float low, float high) {
 	}
 	return f;
 }
-	
+
+float lerp(float a, float b, float t) {
+	return a * (1 - t) + b * t;
+}
+
+float fullMod(int a, int b) {
+	return ((a % b) + b) % b;
+}

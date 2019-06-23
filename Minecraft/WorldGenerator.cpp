@@ -2,7 +2,11 @@
 #include "Util.h"
 #include "World.h"
 
-FastNoise* WorldGenerator::noise = new FastNoise();;
+FastNoise* WorldGenerator::noise = new FastNoise();
+
+BiomeHeightmapOverworld* WorldGenerator::heightMap = new BiomeHeightmapOverworld();
+
+BiomeMap* WorldGenerator::biomeMap = new BiomeMap(heightMap);
 
 WorldGenerator::WorldGenerator()
 {
@@ -40,6 +44,22 @@ Block** WorldGenerator::getChunkBlocks(int cx, int cy) {
 						if (biome == BIOME_DESERT) {
 							b->type = BLOCK_SAND;
 						}
+						else if (biome == BIOME_FOREST) {
+							if (y < height - 1) {
+								b->type = BLOCK_DIRT;
+							}
+							else {
+								b->type = BLOCK_GRASS;
+							}
+						}
+						else if (biome == BIOME_JUNGLE) {
+							if (y < height - 1) {
+								b->type = BLOCK_DIRT;
+							}
+							else {
+								b->type = BLOCK_LIGHT_GRASS;
+							}
+						}
 						else if (biome == BIOME_PLAINS) {
 							if (y < height - 1) {
 								b->type = BLOCK_DIRT;
@@ -59,20 +79,11 @@ Block** WorldGenerator::getChunkBlocks(int cx, int cy) {
 }
 
 int WorldGenerator::getHeight(int x, int z) {
-	return 80 + noise->GetNoise(x * 2, z * 2) * 2;
+	return biomeMap->getHeight(x, z);
 }
 
 int WorldGenerator::getBiome(int x, int z) {
-	if (temperatureMap(x, z) < 0) {
-		return BIOME_DESERT;
-	}
-	else {
-		return BIOME_PLAINS;
-	}
-}
-
-float WorldGenerator::temperatureMap(int x, int z) {
-	return noise->GetNoise(x, z, 100);
+	return biomeMap->getBiome(x, z);
 }
 
 WorldGenerator::~WorldGenerator()
