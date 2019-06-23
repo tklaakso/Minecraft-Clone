@@ -139,9 +139,11 @@ void World::exit() {
 }
 
 void World::reorderBlocks() {
+	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		(*(cm->chunks))[i]->reorderBlocks();
 	}
+	pool->chunkManagerMutex.unlock();
 }
 
 void World::reorderBlock(Block* block, Chunk* suspect) {
@@ -161,9 +163,11 @@ void World::reorderBlock(Block* block, Chunk* suspect) {
 }
 
 void World::updateChunkVAOs() {
+	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		(*(cm->chunks))[i]->updateVAO();
 	}
+	pool->chunkManagerMutex.unlock();
 }
 
 bool World::chunkExists(int x, int y) {
@@ -180,11 +184,13 @@ bool World::regionExists(int x, int y) {
 
 void World::updateLoadedChunks() {
 	glm::vec2 playerChunkPos((float)playerChunkX, (float)playerChunkY);
+	pool->chunkManagerMutex.lock();
 	for (int i = cm->chunks->size() - 1; i >= 0; i--) {
 		if (glm::length(glm::vec2((float)(*(cm->chunks))[i]->x, (float)(*(cm->chunks))[i]->y) - playerChunkPos) > renderDistance) {
 			deleteChunk((*(cm->chunks))[i]->x, (*(cm->chunks))[i]->y);
 		}
 	}
+	pool->chunkManagerMutex.unlock();
 	for (int x = (int)playerChunkPos.x - renderDistance; x < (int)playerChunkPos.x + renderDistance; x++) {
 		for (int y = (int)playerChunkPos.y - renderDistance; y < (int)playerChunkPos.y + renderDistance; y++) {
 			int localX = x - (int)playerChunkPos.x;
@@ -238,6 +244,7 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 
 void World::render() {
 	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
+	//std::cout << Chunk::chunksInPlay << std::endl;
 	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		if ((*(cm->chunks))[i]->state == Chunk::RENDERING) {
@@ -263,16 +270,16 @@ void World::makeRegion(int x, int y) {
 }
 
 void World::updateViewFrustum(ViewFrustum* frustum) {
+	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		(*(cm->chunks))[i]->updateViewFrustum(frustum);
 	}
+	pool->chunkManagerMutex.unlock();
 }
 
 void World::deleteChunk(int x, int y) {
 	ChunkCoords coords(x, y, 0, 0);
-	pool->chunkManagerMutex.lock();
 	Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
-	pool->chunkManagerMutex.unlock();
 	if (c != NULL) {
 		pool->deleteChunk(c);
 	}

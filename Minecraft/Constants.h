@@ -85,7 +85,7 @@ const int BLOCK_INDICES[] = {
 		20, 23, 22
 };
 
-const int NUM_TEXTURES = 15;
+const int NUM_TEXTURES = 17;
 const int BLOCK_TEXTURE_WIDTH = 48;
 const int BLOCK_TEXTURE_HEIGHT = 48;
 
@@ -116,7 +116,7 @@ const int BLOCK_NEIGHBOR_BACK = 5;
 
 const int BLOCK_DIRT = 0;
 const int BLOCK_GRASS = 1;
-const int BLOCK_MOSS = 2;
+const int BLOCK_LEAF = 2;
 const int BLOCK_LIGHT_GRASS = 3;
 const int BLOCK_GRAVEL = 4;
 const int BLOCK_MAGMA = 5;
@@ -129,6 +129,8 @@ const int BLOCK_LOG = 11;
 const int BLOCK_SAND = 12;
 const int BLOCK_CACTUS = 13;
 const int BLOCK_SANDSTONE = 14;
+const int BLOCK_LEAF_ORANGE = 15;
+const int BLOCK_LEAF_RED = 16;
 
 const int BIOME_FOREST = 0;
 const int BIOME_DESERT = 1;

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Structure.h"
+#include "SingularStructure.h"
 
 namespace Structure {
 
-	class StructureSandHut : public Structure
+	class StructureSandHut : public SingularStructure
 	{
 	public:
-		StructureSandHut(std::string filePath);
+		StructureSandHut();
 		bool canSpawn(int x, int z) override;
 		~StructureSandHut();
 	};

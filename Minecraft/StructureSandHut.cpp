@@ -3,7 +3,7 @@
 
 namespace Structure {
 
-	StructureSandHut::StructureSandHut(std::string filePath) : Structure(filePath)
+	StructureSandHut::StructureSandHut() : SingularStructure("Structures/sand_hut.struct")
 	{
 		setSpawnInterval(512);
 		setAttemptsPerInterval(1);

@@ -3,7 +3,7 @@
 
 namespace Structure {
 
-	StructureTree::StructureTree(std::string filePath) : Structure(filePath)
+	StructureTree::StructureTree() : SingularStructure("Structures/tree.struct")
 	{
 		setSpawnInterval(16);
 		setAttemptsPerInterval(4);

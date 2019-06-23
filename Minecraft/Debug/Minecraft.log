@@ -1,9 +1,8 @@
-﻿  BiomeMap.cpp
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(13): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(14): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(26): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+﻿  ChunkThreadPool.cpp
+  World.cpp
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(143): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(167): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(249): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(274): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

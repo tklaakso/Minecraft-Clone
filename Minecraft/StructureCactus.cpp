@@ -3,7 +3,7 @@
 
 namespace Structure {
 
-	StructureCactus::StructureCactus(std::string filePath) : Structure(filePath)
+	StructureCactus::StructureCactus() : SingularStructure("Structures/cactus.struct")
 	{
 		setSpawnInterval(32);
 		setAttemptsPerInterval(2);
