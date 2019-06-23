@@ -84,7 +84,10 @@ void ChunkThread::updateCreationQueue() {
 			}
 			else {
 				c->state = Chunk::FINALIZING;
-				c->updateNeighbors();
+				c->updateBlockNeighbors();
+				c->calculateLighting();
+				c->bake();
+				c->bakeNeighbors();
 				c->state = Chunk::RENDERING;
 			}
 		}

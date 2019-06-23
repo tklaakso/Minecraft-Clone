@@ -43,10 +43,13 @@ void Chunk::setVAO(ChunkVAO* vao, int vaoIndex) {
 void Chunk::swapBlockIndices(Block* b1, int index1, Block* b2, int index2) {
 	glm::vec3 tempTranslation = translations[index1];
 	int tempTexture = textures[index1];
+	int tempLight = lightMap[index1];
 	translations[index1] = translations[index2];
 	textures[index1] = textures[index2];
+	lightMap[index1] = lightMap[index2];
 	translations[index2] = tempTranslation;
 	textures[index2] = tempTexture;
+	lightMap[index2] = tempLight;
 	translationBlocks[index1] = b2;
 	translationBlocks[index2] = b1;
 	if (b1 != NULL) {
@@ -73,14 +76,16 @@ void Chunk::generate(WorldGenerator* gen) {
 	chunksInPlay++;
 	translations = (glm::vec3*)malloc(sizeof(glm::vec3) * BLOCKS_PER_CHUNK);
 	translationBlocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK);
-	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
-		translationBlocks[i] = NULL;
-	}
 	textures = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
 	blocks = gen->getChunkBlocks(x, y);
+	lightMap = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
+	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
+		translationBlocks[i] = NULL;
+		lightMap[i] = 0;
+	}
 }
 
-void Chunk::updateNeighbors() {
+void Chunk::updateBlockNeighbors() {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		int bx, by, bz, gx, gy, gz;
 		if (blocks[i] != NULL) {
@@ -202,15 +207,37 @@ void Chunk::updateNeighbors() {
 		}
 		if (blocks[i] != NULL) {
 			blocks[i]->updateNeighbors();
+			blocks[i]->translationIndex = numBlocks;
 			translations[numBlocks] = glm::vec3(gx, gy, gz);
 			translationBlocks[numBlocks] = blocks[i];
 			textures[numBlocks] = blocks[i]->type;
+			lightMap[numBlocks] = 0;
 			numBlocks++;
 			numBlocksRendered++;
 		}
 	}
+}
+
+void Chunk::calculateLighting() {
+	for (int x = 0; x < CHUNK_WIDTH; x++) {
+		for (int z = 0; z < CHUNK_WIDTH; z++) {
+			for (int y = CHUNK_HEIGHT - 1; y >= 0; y--) {
+				int index = blockCoordsToIndex(x, y, z);
+				if (blocks[index] != NULL) {
+					lightMap[blocks[index]->translationIndex] = 255;
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Chunk::bake() {
 	reorderBlocks();
 	updateVAO();
+}
+
+void Chunk::bakeNeighbors() {
 	if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
 		neighbors[CHUNK_NEIGHBOR_LEFT]->reorderBlocks();
 		neighbors[CHUNK_NEIGHBOR_LEFT]->updateVAO();
@@ -340,7 +367,6 @@ Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
 	if (blocks != prevBlocks) {
 		prevBlocks = blocks;
 		blockChanges++;
-		//std::cout << "Block " << blockChanges << ": " << blocks << ", " << blockCoordsToIndex(localX, globalY, localZ) << std::endl;
 	}
 	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
 		this->state;
@@ -397,6 +423,7 @@ void Chunk::render() {
 	if (shouldUpdateVAO) {
 		vao->updateTranslationData(translations, numBlocksRendered);
 		vao->updateTextureData(textures, numBlocksRendered);
+		vao->updateLightmapData(lightMap, numBlocksRendered);
 		shouldUpdateVAO = false;
 	}
 	if (insideViewFrustum) {
@@ -459,5 +486,6 @@ Chunk::~Chunk()
 	free(translations);
 	free(translationBlocks);
 	free(textures);
+	free(lightMap);
 	free(neighbors);
 }

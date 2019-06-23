@@ -9,6 +9,7 @@ ChunkVAO::ChunkVAO()
 	glGenBuffers(1, &uvVBO);
 	glGenBuffers(1, &textureVBO);
 	glGenBuffers(1, &instanceVBO);
+	glGenBuffers(1, &lightmapVBO);
 
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
@@ -40,6 +41,12 @@ ChunkVAO::ChunkVAO()
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glVertexAttribDivisor(3, 1);
 
+	glEnableVertexAttribArray(4);
+	glBindBuffer(GL_ARRAY_BUFFER, lightmapVBO);
+	glVertexAttribPointer(4, 1, GL_FLOAT, GL_FALSE, sizeof(int), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glVertexAttribDivisor(4, 1);
+
 }
 
 void ChunkVAO::updateTranslationData(glm::vec3* translations, int len) {
@@ -56,6 +63,15 @@ void ChunkVAO::updateTextureData(int* textures, int len) {
 	bind();
 	glBindBuffer(GL_ARRAY_BUFFER, textureVBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(int) * len, &textures[0], GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+void ChunkVAO::updateLightmapData(int* lightMap, int len) {
+
+	bind();
+	glBindBuffer(GL_ARRAY_BUFFER, lightmapVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(int) * len, &lightMap[0], GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 }

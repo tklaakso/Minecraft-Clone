@@ -1,8 +1,2 @@
-﻿  ChunkThreadPool.cpp
-  World.cpp
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(143): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(167): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(249): warning C4018: '<': signed/unsigned mismatch
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(274): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
+﻿  Chunk.cpp
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

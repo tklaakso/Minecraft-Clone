@@ -19,7 +19,10 @@ public:
 	void setBlockLocal(int localX, int localY, int localZ, Block* block, bool update);
 	void initWithoutGeneration();
 	void generate(WorldGenerator* gen);
-	void updateNeighbors();
+	void updateBlockNeighbors();
+	void calculateLighting();
+	void bake();
+	void bakeNeighbors();
 	void updateVAO();
 	int compare(Chunk* other);
 	int compare(ChunkCoords* other);
@@ -53,6 +56,7 @@ private:
 	Block** prevBlocks;
 	Block** blocks;
 	Block** translationBlocks;
+	int* lightMap;
 	queue<int> freeBlocks;
 };
 
