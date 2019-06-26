@@ -237,6 +237,9 @@ void Chunk::calculateLighting() {
 			blocks[i]->calculateLighting();
 		}
 	}
+}
+
+void Chunk::makeLightmap() {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		if (blocks[i] != NULL) {
 			lightMap[blocks[i]->getTranslationIndex()] = blocks[i]->getLightValue();

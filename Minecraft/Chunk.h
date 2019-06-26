@@ -21,6 +21,7 @@ public:
 	void generate(WorldGenerator* gen);
 	void updateBlockNeighbors();
 	void calculateLighting();
+	void makeLightmap();
 	void bake();
 	void bakeNeighbors();
 	void updateVAO();

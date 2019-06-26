@@ -86,6 +86,7 @@ void ChunkThread::updateCreationQueue() {
 				c->state = Chunk::FINALIZING;
 				c->updateBlockNeighbors();
 				c->calculateLighting();
+				c->makeLightmap();
 				c->bake();
 				c->bakeNeighbors();
 				c->state = Chunk::RENDERING;
