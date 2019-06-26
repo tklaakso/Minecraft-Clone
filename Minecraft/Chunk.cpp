@@ -237,6 +237,15 @@ void Chunk::calculateLighting() {
 			blocks[i]->calculateLighting();
 		}
 	}
+	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
+		if (blocks[i] != NULL) {
+			int localX = blocks[i]->getX() - x * CHUNK_WIDTH;
+			int localZ = blocks[i]->getZ() - y * CHUNK_WIDTH;
+			if (localX == 0 || localX == CHUNK_WIDTH - 1 || localZ == 0 || localZ == CHUNK_WIDTH - 1) {
+				blocks[i]->calculateNeighborLighting();
+			}
+		}
+	}
 }
 
 void Chunk::makeLightmap() {

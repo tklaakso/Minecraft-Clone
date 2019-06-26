@@ -22,7 +22,7 @@ void ChunkThread::updateCreationQueue() {
 	chunkMutex->lock();
 	if (creationQueue->size() > 0) {
 		Chunk* c = (*creationQueue)[0];
-		std::cout << "Create state: " << c->state << std::endl;
+		//std::cout << "Create state: " << c->state << std::endl;
 		creationQueue->erase(creationQueue->begin());
 		for (int i = 0; i < creationQueue->size(); i++) {
 			if ((*creationQueue)[i]->compare(c) == 0) {
@@ -111,7 +111,7 @@ void ChunkThread::updateDeletionQueue() {
 		}
 		chunkMutex->unlock();
 		if (c->state != Chunk::RENDERING) {
-			std::cout << "State: " << c->state << ", deletion size: " << deletionQueue->size() << ", creation size: " << creationQueue->size() << std::endl;
+			//std::cout << "State: " << c->state << ", deletion size: " << deletionQueue->size() << ", creation size: " << creationQueue->size() << std::endl;
 			chunkMutex->lock();
 			deletionQueue->push_back(c);
 			chunkMutex->unlock();

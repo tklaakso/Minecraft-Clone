@@ -27,7 +27,9 @@ public:
 	int getId();
 	void setLightValue(int lightValue);
 	int getLightValue();
+	float getTransparency();
 	void calculateLighting();
+	void calculateNeighborLighting();
 	virtual Block* clone() = 0;
 	virtual bool shouldRenderType() = 0;
 	~Block();
@@ -36,9 +38,11 @@ private:
 	int translationIndex;
 	int type;
 	int lightValue = 0;
+	float transparency = 1.0f;
 	bool render;
 protected:
 	Block** neighbors;
+	void setTransparency(float transparency);
 	int x, y, z;
 };
 

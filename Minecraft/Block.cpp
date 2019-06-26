@@ -125,12 +125,28 @@ int Block::getLightValue() {
 void Block::calculateLighting() {
 	if (lightValue > 0) {
 		for (int i = 0; i < 6; i++) {
-			if (neighbors[i] != NULL && neighbors[i]->getLightValue() < lightValue - LIGHT_DEPRECIATION) {
-				neighbors[i]->setLightValue(lightValue - LIGHT_DEPRECIATION);
+			if (neighbors[i] != NULL && neighbors[i]->getLightValue() < (1.0f - getTransparency()) * (lightValue - LIGHT_DEPRECIATION)) {
+				neighbors[i]->setLightValue((1.0f - getTransparency()) * (lightValue - LIGHT_DEPRECIATION));
 				neighbors[i]->calculateLighting();
 			}
 		}
 	}
+}
+
+void Block::calculateNeighborLighting() {
+	for (int i = 0; i < 6; i++) {
+		if (neighbors[i] != NULL) {
+			neighbors[i]->calculateLighting();
+		}
+	}
+}
+
+void Block::setTransparency(float transparency) {
+	this->transparency = transparency;
+}
+
+float Block::getTransparency() {
+	return transparency;
 }
 
 Block::~Block()
