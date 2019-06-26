@@ -67,7 +67,7 @@ void Region::generate() {
 							std::vector<Block*> bl = str->generate(noiseBlockX, noiseBlockY, noiseBlockZ);
 							for (int l = 0; l < bl.size(); l++) {
 								Block* b = bl[l];
-								ChunkCoords c = blockToChunkCoords(b->x, b->z);
+								ChunkCoords c = blockToChunkCoords(b->getX(), b->getZ());
 								int regionChunkX = c.chunkX - x * REGION_WIDTH_CHUNKS;
 								int regionChunkZ = c.chunkZ - z * REGION_WIDTH_CHUNKS;
 								assert(regionChunkX >= 0 && regionChunkX < REGION_WIDTH_CHUNKS);

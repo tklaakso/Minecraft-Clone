@@ -1,4 +1,22 @@
 #include "Util.h"
+#include "BlockAir.h"
+#include "BlockDirt.h"
+#include "BlockGrass.h"
+#include "BlockLeaf.h"
+#include "BlockLightGrass.h"
+#include "BlockGravel.h"
+#include "BlockMagma.h"
+#include "BlockWater.h"
+#include "BlockGoldOre.h"
+#include "BlockIronOre.h"
+#include "BlockDiamondOre.h"
+#include "BlockCoalOre.h"
+#include "BlockLog.h"
+#include "BlockSand.h"
+#include "BlockCactus.h"
+#include "BlockSandstone.h"
+#include "BlockLeafOrange.h"
+#include "BlockLeafRed.h"
 
 std::string toString(int i) {
 	std::string outString;
@@ -58,4 +76,47 @@ ChunkCoords blockToChunkCoords(int bx, int bz) {
 RegionCoords chunkToRegionCoords(int cx, int cz) {
 	RegionCoords r((int)floor((double)cx / REGION_WIDTH_CHUNKS), (int)floor((double)cz / REGION_WIDTH_CHUNKS));
 	return r;
+}
+
+Block* makeBlock(int id, int x, int y, int z) {
+	switch (id) {
+	case BLOCK_AIR:
+		return new BlockAir(x, y, z);
+	case BLOCK_DIRT:
+		return new BlockDirt(x, y, z);
+	case BLOCK_GRASS:
+		return new BlockGrass(x, y, z);
+	case BLOCK_LEAF:
+		return new BlockLeaf(x, y, z);
+	case BLOCK_LIGHT_GRASS:
+		return new BlockLightGrass(x, y, z);
+	case BLOCK_GRAVEL:
+		return new BlockGravel(x, y, z);
+	case BLOCK_MAGMA:
+		return new BlockMagma(x, y, z);
+	case BLOCK_WATER:
+		return new BlockWater(x, y, z);
+	case BLOCK_GOLD_ORE:
+		return new BlockGoldOre(x, y, z);
+	case BLOCK_IRON_ORE:
+		return new BlockIronOre(x, y, z);
+	case BLOCK_DIAMOND_ORE:
+		return new BlockDiamondOre(x, y, z);
+	case BLOCK_COAL_ORE:
+		return new BlockCoalOre(x, y, z);
+	case BLOCK_LOG:
+		return new BlockLog(x, y, z);
+	case BLOCK_SAND:
+		return new BlockSand(x, y, z);
+	case BLOCK_CACTUS:
+		return new BlockCactus(x, y, z);
+	case BLOCK_SANDSTONE:
+		return new BlockSandstone(x, y, z);
+	case BLOCK_LEAF_ORANGE:
+		return new BlockLeafOrange(x, y, z);
+	case BLOCK_LEAF_RED:
+		return new BlockLeafRed(x, y, z);
+	default:
+		return new BlockAir(x, y, z);
+	}
 }

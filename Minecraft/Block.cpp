@@ -47,31 +47,89 @@ void Block::deInitialize() {
 
 }
 
-Block* Block::clone() {
-	Block* cloned = new Block(x, y, z);
-	cloned->type = type;
-	return cloned;
-}
-
-void Block::updateNeighbors() {
-	for (int i = 0; i < 6; i++) {
-		if (neighbors[i] == NULL) {
-			shouldRender = true;
-			return;
-		}
-	}
-	shouldRender = false;
-}
-
-Block::Block(int x, int y, int z)
+Block::Block(int id, int x, int y, int z)
 {
+	this->type = id;
 	this->x = x;
 	this->y = y;
 	this->z = z;
-	shouldRender = true;
+	render = true;
 	neighbors = (Block**)malloc(sizeof(Block*) * 6);
 	for (int i = 0; i < 6; i++) {
 		neighbors[i] = NULL;
+	}
+}
+
+void Block::updateNeighbors() {
+	if (!shouldRenderType()) {
+		render = false;
+		return;
+	}
+	for (int i = 0; i < 6; i++) {
+		if (neighbors[i] == NULL || !neighbors[i]->shouldRenderType()) {
+			render = true;
+			return;
+		}
+	}
+	render = false;
+}
+
+unsigned int Block::getTexture() {
+	return texture;
+}
+
+void Block::setTexture(unsigned int texture) {
+	Block::texture = texture;
+}
+
+int Block::getTranslationIndex() {
+	return translationIndex;
+}
+
+void Block::setTranslationIndex(int index) {
+	this->translationIndex = index;
+}
+
+bool Block::shouldRender() {
+	return render;
+}
+
+Block** Block::getNeighbors() {
+	return neighbors;
+}
+
+int Block::getX() {
+	return x;
+}
+
+int Block::getY() {
+	return y;
+}
+
+int Block::getZ() {
+	return z;
+}
+
+int Block::getId() {
+	return type;
+}
+
+void Block::setLightValue(int lightValue) {
+	this->lightValue = lightValue;
+}
+
+int Block::getLightValue() {
+	return lightValue;
+}
+
+void Block::calculateLighting() {
+	if (lightValue > 0) {
+		for (int i = 0; i < 6; i++) {
+			if (neighbors[i] != NULL && neighbors[i]->getLightValue() < lightValue - LIGHT_DEPRECIATION) {
+				neighbors[i]->setLightValue(lightValue - LIGHT_DEPRECIATION);
+				neighbors[i]->calculateLighting();
+			}
+		}
 	}
 }
 

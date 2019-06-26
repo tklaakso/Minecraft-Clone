@@ -1,6 +1,24 @@
 #include "WorldGenerator.h"
 #include "Util.h"
 #include "World.h"
+#include "BlockAir.h"
+#include "BlockDirt.h"
+#include "BlockGrass.h"
+#include "BlockLeaf.h"
+#include "BlockLightGrass.h"
+#include "BlockGravel.h"
+#include "BlockMagma.h"
+#include "BlockWater.h"
+#include "BlockGoldOre.h"
+#include "BlockIronOre.h"
+#include "BlockDiamondOre.h"
+#include "BlockCoalOre.h"
+#include "BlockLog.h"
+#include "BlockSand.h"
+#include "BlockCactus.h"
+#include "BlockSandstone.h"
+#include "BlockLeafOrange.h"
+#include "BlockLeafRed.h"
 
 FastNoise* WorldGenerator::noise = new FastNoise();
 
@@ -23,10 +41,10 @@ Block** WorldGenerator::getChunkBlocks(int cx, int cy) {
 			Block* b = (*structureBlocks)[0];
 			for (int i = 0; i < structureBlocks->size(); i++) {
 				Block* b = (*structureBlocks)[i];
-				assert(b->x >= cx * CHUNK_WIDTH && b->x < (cx + 1) * CHUNK_WIDTH);
-				assert(b->z >= cy * CHUNK_WIDTH && b->z < (cy + 1) * CHUNK_WIDTH);
-				int index = blockCoordsToIndex(b->x - cx * CHUNK_WIDTH, b->y, b->z - cy * CHUNK_WIDTH);
-				b->translationIndex = index;
+				assert(b->getX() >= cx * CHUNK_WIDTH && b->getX() < (cx + 1) * CHUNK_WIDTH);
+				assert(b->getZ() >= cy * CHUNK_WIDTH && b->getZ() < (cy + 1) * CHUNK_WIDTH);
+				int index = blockCoordsToIndex(b->getX() - cx * CHUNK_WIDTH, b->getY(), b->getZ() - cy * CHUNK_WIDTH);
+				b->setTranslationIndex(index);
 				blocks[index] = b;
 			}
 		}
@@ -39,40 +57,48 @@ Block** WorldGenerator::getChunkBlocks(int cx, int cy) {
 				int index = blockCoordsToIndex(x, y, z);
 				if (blocks[index] == NULL) {
 					if (y < height) {
-						Block* b = new Block(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+						Block* b = NULL;
 						int biome = getBiome(x + cx * CHUNK_WIDTH, z + cy * CHUNK_WIDTH);
 						if (biome == BIOME_DESERT) {
-							b->type = BLOCK_SAND;
+							b = new BlockSand(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 						}
 						else if (biome == BIOME_FOREST) {
 							if (y < height - 1) {
-								b->type = BLOCK_DIRT;
+								b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
 							else {
-								b->type = BLOCK_GRASS;
+								b = new BlockGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
 						}
 						else if (biome == BIOME_JUNGLE) {
 							if (y < height - 1) {
-								b->type = BLOCK_DIRT;
+								b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
 							else {
-								b->type = BLOCK_LIGHT_GRASS;
+								b = new BlockLightGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
 						}
 						else if (biome == BIOME_PLAINS) {
 							if (y < height - 1) {
-								b->type = BLOCK_DIRT;
+								b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
 							else {
-								b->type = BLOCK_GRASS;
+								b = new BlockGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
 						}
-						b->translationIndex = index;
+						b->setTranslationIndex(index);
 						blocks[index] = b;
 					}
 				}
 			}
+		}
+	}
+	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
+		BlockCoords coords = indexToBlockCoords(i);
+		if (blocks[i] == NULL) {
+			Block* air = new BlockAir(coords.x + cx * CHUNK_WIDTH, coords.y, coords.z + cy * CHUNK_WIDTH);
+			air->setTranslationIndex(i);
+			blocks[i] = air;
 		}
 	}
 	return blocks;

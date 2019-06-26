@@ -28,7 +28,7 @@ Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
 
 void World::updateRendering(Block* block, Chunk* suspect) {
 	Chunk* c = NULL;
-	int x = block->x, y = block->y, z = block->z;
+	int x = block->getX(), y = block->getY(), z = block->getZ();
 	if (suspect != NULL && suspect->blockInChunk(x, y, z)) {
 		c = suspect;
 	}
@@ -39,7 +39,7 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 		pool->chunkManagerMutex.unlock();
 	}
 	if (c != NULL) {
-		c->textures[block->translationIndex] = block->shouldRender ? block->type : -1;
+		c->textures[block->getTranslationIndex()] = block->shouldRender() ? block->getId() : -1;
 	}
 }
 
@@ -58,39 +58,39 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 		Block* back = getBlock(x, y, z + 1, chunk);
 		if (left != NULL) {
 			if (block != NULL) {
-				block->neighbors[BLOCK_NEIGHBOR_LEFT] = left;
+				block->getNeighbors()[BLOCK_NEIGHBOR_LEFT] = left;
 			}
-			left->neighbors[BLOCK_NEIGHBOR_RIGHT] = block;
+			left->getNeighbors()[BLOCK_NEIGHBOR_RIGHT] = block;
 		}
 		if (right != NULL) {
 			if (block != NULL) {
-				block->neighbors[BLOCK_NEIGHBOR_RIGHT] = right;
+				block->getNeighbors()[BLOCK_NEIGHBOR_RIGHT] = right;
 			}
-			right->neighbors[BLOCK_NEIGHBOR_LEFT] = block;
+			right->getNeighbors()[BLOCK_NEIGHBOR_LEFT] = block;
 		}
 		if (up != NULL) {
 			if (block != NULL) {
-				block->neighbors[BLOCK_NEIGHBOR_UP] = up;
+				block->getNeighbors()[BLOCK_NEIGHBOR_UP] = up;
 			}
-			up->neighbors[BLOCK_NEIGHBOR_DOWN] = block;
+			up->getNeighbors()[BLOCK_NEIGHBOR_DOWN] = block;
 		}
 		if (down != NULL) {
 			if (block != NULL) {
-				block->neighbors[BLOCK_NEIGHBOR_DOWN] = down;
+				block->getNeighbors()[BLOCK_NEIGHBOR_DOWN] = down;
 			}
-			down->neighbors[BLOCK_NEIGHBOR_UP] = block;
+			down->getNeighbors()[BLOCK_NEIGHBOR_UP] = block;
 		}
 		if (front != NULL) {
 			if (block != NULL) {
-				block->neighbors[BLOCK_NEIGHBOR_FRONT] = front;
+				block->getNeighbors()[BLOCK_NEIGHBOR_FRONT] = front;
 			}
-			front->neighbors[BLOCK_NEIGHBOR_BACK] = block;
+			front->getNeighbors()[BLOCK_NEIGHBOR_BACK] = block;
 		}
 		if (back != NULL) {
 			if (block != NULL) {
-				block->neighbors[BLOCK_NEIGHBOR_BACK] = back;
+				block->getNeighbors()[BLOCK_NEIGHBOR_BACK] = back;
 			}
-			back->neighbors[BLOCK_NEIGHBOR_FRONT] = block;
+			back->getNeighbors()[BLOCK_NEIGHBOR_FRONT] = block;
 		}
 		if (left != NULL) {
 			left->updateNeighbors();
@@ -147,7 +147,7 @@ void World::reorderBlocks() {
 }
 
 void World::reorderBlock(Block* block, Chunk* suspect) {
-	int x = block->x, y = block->y, z = block->z;
+	int x = block->getX(), y = block->getY(), z = block->getZ();
 	if (suspect->blockInChunk(x, y, z)) {
 		suspect->reorderBlock(block);
 		suspect->updateVAO();
@@ -243,8 +243,7 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 }
 
 void World::render() {
-	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::texture);
-	//std::cout << Chunk::chunksInPlay << std::endl;
+	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::getTexture());
 	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		if ((*(cm->chunks))[i]->state == Chunk::RENDERING) {

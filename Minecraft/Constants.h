@@ -85,7 +85,7 @@ const int BLOCK_INDICES[] = {
 		20, 23, 22
 };
 
-const int NUM_TEXTURES = 17;
+const int NUM_TEXTURES = 18;
 const int BLOCK_TEXTURE_WIDTH = 48;
 const int BLOCK_TEXTURE_HEIGHT = 48;
 
@@ -114,23 +114,24 @@ const int BLOCK_NEIGHBOR_DOWN = 3;
 const int BLOCK_NEIGHBOR_FRONT = 4;
 const int BLOCK_NEIGHBOR_BACK = 5;
 
-const int BLOCK_DIRT = 0;
-const int BLOCK_GRASS = 1;
-const int BLOCK_LEAF = 2;
-const int BLOCK_LIGHT_GRASS = 3;
-const int BLOCK_GRAVEL = 4;
-const int BLOCK_MAGMA = 5;
-const int BLOCK_WATER = 6;
-const int BLOCK_GOLD_ORE = 7;
-const int BLOCK_IRON_ORE = 8;
-const int BLOCK_DIAMOND_ORE = 9;
-const int BLOCK_COAL_ORE = 10;
-const int BLOCK_LOG = 11;
-const int BLOCK_SAND = 12;
-const int BLOCK_CACTUS = 13;
-const int BLOCK_SANDSTONE = 14;
-const int BLOCK_LEAF_ORANGE = 15;
-const int BLOCK_LEAF_RED = 16;
+const int BLOCK_AIR = 0;
+const int BLOCK_DIRT = 1;
+const int BLOCK_GRASS = 2;
+const int BLOCK_LEAF = 3;
+const int BLOCK_LIGHT_GRASS = 4;
+const int BLOCK_GRAVEL = 5;
+const int BLOCK_MAGMA = 6;
+const int BLOCK_WATER = 7;
+const int BLOCK_GOLD_ORE = 8;
+const int BLOCK_IRON_ORE = 9;
+const int BLOCK_DIAMOND_ORE = 10;
+const int BLOCK_COAL_ORE = 11;
+const int BLOCK_LOG = 12;
+const int BLOCK_SAND = 13;
+const int BLOCK_CACTUS = 14;
+const int BLOCK_SANDSTONE = 15;
+const int BLOCK_LEAF_ORANGE = 16;
+const int BLOCK_LEAF_RED = 17;
 
 const int BIOME_FOREST = 0;
 const int BIOME_DESERT = 1;
@@ -141,5 +142,7 @@ const float MOUSE_SENSITIVITY = 0.1f;
 
 const float BIOME_HEIGHT_BLEND = 0.02f;
 const float BIOME_SPARSITY = 5.0f;
+
+const int LIGHT_DEPRECIATION = 32;
 
 #endif

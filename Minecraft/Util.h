@@ -7,6 +7,7 @@
 #include "Constants.h"
 #include "Chunk.h"
 #include "RegionCoords.h"
+#include "Block.h"
 
 std::string toString(int i);
 
@@ -21,5 +22,7 @@ Chunk* findChunkWithCoords(std::vector<Chunk*>* chunks, ChunkCoords* coords, int
 ChunkCoords blockToChunkCoords(int bx, int bz);
 
 RegionCoords chunkToRegionCoords(int cx, int cz);
+
+Block* makeBlock(int id, int x, int y, int z);
 
 #endif

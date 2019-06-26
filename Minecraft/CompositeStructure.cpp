@@ -49,8 +49,7 @@ namespace Structure {
 						maxz = z;
 					}
 				}
-				Block* b = new Block(x, y, z);
-				b->type = id;
+				Block* b = makeBlock(id, x, y, z);
 				currentBlocks->push_back(b);
 			}
 			file.close();
@@ -66,8 +65,7 @@ namespace Structure {
 				std::vector<Block*> generated;
 				for (int i = 0; i < b->size(); i++) {
 					Block* block = b->at(i);
-					Block* gb = new Block(block->x + x, block->y + y, block->z + z);
-					gb->type = block->type;
+					Block* gb = makeBlock(block->getId(), block->getX() + x, block->getY() + y, block->getZ() + z);
 					generated.push_back(gb);
 				}
 				return generated;
