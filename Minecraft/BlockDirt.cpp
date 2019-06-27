@@ -8,10 +8,6 @@ bool BlockDirt::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockDirt::clone() {
-	return new BlockDirt(x, y, z);
-}
-
 BlockDirt::~BlockDirt()
 {
 }

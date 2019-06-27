@@ -8,6 +8,8 @@
 #include "stb_image.h"
 #include <stdio.h>
 
+class Chunk;
+
 class Block
 {
 public:
@@ -30,7 +32,8 @@ public:
 	float getTransparency();
 	void calculateLighting();
 	void calculateNeighborLighting();
-	virtual Block* clone() = 0;
+	Block* setParent(Chunk* parent);
+	Chunk* getParent();
 	virtual bool shouldRenderType() = 0;
 	~Block();
 private:
@@ -42,6 +45,7 @@ private:
 	bool render;
 protected:
 	Block** neighbors;
+	Chunk* parent;
 	void setTransparency(float transparency);
 	int x, y, z;
 };

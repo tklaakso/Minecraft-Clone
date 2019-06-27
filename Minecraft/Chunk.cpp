@@ -1,11 +1,13 @@
 #include "Chunk.h"
 #include "Constants.h"
 #include "Util.h"
+#include "ChunkThreadPool.h"
 
 int Chunk::chunksInPlay = 0;
 
-Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex)
+Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool)
 {
+	this->pool = pool;
 	this->x = x;
 	this->y = y;
 	this->vao = vao;
@@ -21,7 +23,8 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex)
 	}
 }
 
-Chunk::Chunk(int x, int y) {
+Chunk::Chunk(int x, int y, ChunkThreadPool* pool) {
+	this->pool = pool;
 	this->x = x;
 	this->y = y;
 	insideViewFrustum = true;
@@ -82,6 +85,9 @@ void Chunk::generate(WorldGenerator* gen) {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		translationBlocks[i] = NULL;
 		lightMap[i] = 0;
+		if (blocks[i] != NULL) {
+			blocks[i]->setParent(this);
+		}
 	}
 }
 
@@ -254,6 +260,10 @@ void Chunk::makeLightmap() {
 			lightMap[blocks[i]->getTranslationIndex()] = blocks[i]->getLightValue();
 		}
 	}
+}
+
+void Chunk::updateLightingOnRender() {
+	this->updateLighting = true;
 }
 
 void Chunk::bake() {
@@ -444,6 +454,11 @@ void Chunk::updateViewFrustum(ViewFrustum* frustum) {
 }
 
 void Chunk::render() {
+	if (updateLighting) {
+		makeLightmap();
+		updateVAO();
+		updateLighting = false;
+	}
 	if (shouldUpdateVAO) {
 		vao->updateTranslationData(translations, numBlocksRendered);
 		vao->updateTextureData(textures, numBlocksRendered);

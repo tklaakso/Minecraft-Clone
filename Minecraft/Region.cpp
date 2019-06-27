@@ -101,7 +101,7 @@ std::vector<Block*>* Region::getChunkBlocks(int cx, int cz) {
 	assert(chunkZ >= 0 && chunkZ < REGION_WIDTH_CHUNKS);
 	std::vector<Block*>* b = new std::vector<Block*>();
 	for (int i = 0; i < blocks[chunkX][chunkZ]->size(); i++) {
-		b->push_back(blocks[chunkX][chunkZ]->at(i)->clone());
+		b->push_back(clone(blocks[chunkX][chunkZ]->at(i)));
 	}
 	return b;
 }

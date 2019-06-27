@@ -78,45 +78,50 @@ RegionCoords chunkToRegionCoords(int cx, int cz) {
 	return r;
 }
 
-Block* makeBlock(int id, int x, int y, int z) {
+Block* makeBlock(int id, int x, int y, int z, Chunk* parent) {
 	switch (id) {
 	case BLOCK_AIR:
-		return new BlockAir(x, y, z);
+		return (new BlockAir(x, y, z))->setParent(parent);
 	case BLOCK_DIRT:
-		return new BlockDirt(x, y, z);
+		return (new BlockDirt(x, y, z))->setParent(parent);
 	case BLOCK_GRASS:
-		return new BlockGrass(x, y, z);
+		return (new BlockGrass(x, y, z))->setParent(parent);
 	case BLOCK_LEAF:
-		return new BlockLeaf(x, y, z);
+		return (new BlockLeaf(x, y, z))->setParent(parent);
 	case BLOCK_LIGHT_GRASS:
-		return new BlockLightGrass(x, y, z);
+		return (new BlockLightGrass(x, y, z))->setParent(parent);
 	case BLOCK_GRAVEL:
-		return new BlockGravel(x, y, z);
+		return (new BlockGravel(x, y, z))->setParent(parent);
 	case BLOCK_MAGMA:
-		return new BlockMagma(x, y, z);
+		return (new BlockMagma(x, y, z))->setParent(parent);
 	case BLOCK_WATER:
-		return new BlockWater(x, y, z);
+		return (new BlockWater(x, y, z))->setParent(parent);
 	case BLOCK_GOLD_ORE:
-		return new BlockGoldOre(x, y, z);
+		return (new BlockGoldOre(x, y, z))->setParent(parent);
 	case BLOCK_IRON_ORE:
-		return new BlockIronOre(x, y, z);
+		return (new BlockIronOre(x, y, z))->setParent(parent);
 	case BLOCK_DIAMOND_ORE:
-		return new BlockDiamondOre(x, y, z);
+		return (new BlockDiamondOre(x, y, z))->setParent(parent);
 	case BLOCK_COAL_ORE:
-		return new BlockCoalOre(x, y, z);
+		return (new BlockCoalOre(x, y, z))->setParent(parent);
 	case BLOCK_LOG:
-		return new BlockLog(x, y, z);
+		return (new BlockLog(x, y, z))->setParent(parent);
 	case BLOCK_SAND:
-		return new BlockSand(x, y, z);
+		return (new BlockSand(x, y, z))->setParent(parent);
 	case BLOCK_CACTUS:
-		return new BlockCactus(x, y, z);
+		return (new BlockCactus(x, y, z))->setParent(parent);
 	case BLOCK_SANDSTONE:
-		return new BlockSandstone(x, y, z);
+		return (new BlockSandstone(x, y, z))->setParent(parent);
 	case BLOCK_LEAF_ORANGE:
-		return new BlockLeafOrange(x, y, z);
+		return (new BlockLeafOrange(x, y, z))->setParent(parent);
 	case BLOCK_LEAF_RED:
-		return new BlockLeafRed(x, y, z);
+		return (new BlockLeafRed(x, y, z))->setParent(parent);
 	default:
-		return new BlockAir(x, y, z);
+		return (new BlockAir(x, y, z))->setParent(parent);
 	}
+}
+
+Block* clone(Block* b) {
+	assert(b != NULL);
+	return makeBlock(b->getId(), b->getX(), b->getY(), b->getZ(), b->getParent());
 }

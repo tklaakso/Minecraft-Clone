@@ -255,7 +255,7 @@ void World::render() {
 
 void World::makeChunk(int x, int y) {
 	if (!chunkExists(x, y)) {
-		Chunk* c = new Chunk(x, y);
+		Chunk* c = new Chunk(x, y, pool);
 		pool->createChunk(c);
 	}
 }

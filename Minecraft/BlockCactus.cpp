@@ -8,10 +8,6 @@ bool BlockCactus::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockCactus::clone() {
-	return new BlockCactus(x, y, z);
-}
-
 BlockCactus::~BlockCactus()
 {
 }

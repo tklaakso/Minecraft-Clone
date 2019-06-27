@@ -8,10 +8,6 @@ bool BlockGravel::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockGravel::clone() {
-	return new BlockGravel(x, y, z);
-}
-
 BlockGravel::~BlockGravel()
 {
 }

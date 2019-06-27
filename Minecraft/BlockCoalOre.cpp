@@ -8,10 +8,6 @@ bool BlockCoalOre::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockCoalOre::clone() {
-	return new BlockCoalOre(x, y, z);
-}
-
 BlockCoalOre::~BlockCoalOre()
 {
 }

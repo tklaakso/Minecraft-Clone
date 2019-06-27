@@ -8,10 +8,6 @@ bool BlockLeaf::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockLeaf::clone() {
-	return new BlockLeaf(x, y, z);
-}
-
 BlockLeaf::~BlockLeaf()
 {
 }

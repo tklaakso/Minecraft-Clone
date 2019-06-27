@@ -8,10 +8,6 @@ bool BlockDiamondOre::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockDiamondOre::clone() {
-	return new BlockDiamondOre(x, y, z);
-}
-
 BlockDiamondOre::~BlockDiamondOre()
 {
 }

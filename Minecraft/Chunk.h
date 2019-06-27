@@ -7,11 +7,13 @@
 #include <queue>
 #include <GLFW/glfw3.h>
 
+class ChunkThreadPool;
+
 class Chunk
 {
 public:
-	Chunk(int x, int y, ChunkVAO* vao, int vaoIndex);
-	Chunk(int x, int y);
+	Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool);
+	Chunk(int x, int y, ChunkThreadPool* pool);
 	void setVAO(ChunkVAO* vao, int vaoIndex);
 	void setBlock(int globalX, int globalY, int globalZ, Block* block, bool update);
 	Block* getBlock(int globalX, int globalY, int globalZ);
@@ -21,6 +23,7 @@ public:
 	void generate(WorldGenerator* gen);
 	void updateBlockNeighbors();
 	void calculateLighting();
+	void updateLightingOnRender();
 	void makeLightmap();
 	void bake();
 	void bakeNeighbors();
@@ -47,6 +50,7 @@ public:
 	static const int DELETING = 5;
 	~Chunk();
 private:
+	bool updateLighting;
 	bool insideViewFrustum;
 	bool shouldUpdateVAO;
 	void swapBlockIndices(Block* b1, int index1, Block* b2, int index2);
@@ -59,5 +63,6 @@ private:
 	Block** translationBlocks;
 	int* lightMap;
 	queue<int> freeBlocks;
+	ChunkThreadPool* pool;
 };
 

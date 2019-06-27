@@ -8,10 +8,6 @@ bool BlockGoldOre::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockGoldOre::clone() {
-	return new BlockGoldOre(x, y, z);
-}
-
 BlockGoldOre::~BlockGoldOre()
 {
 }

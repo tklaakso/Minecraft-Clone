@@ -8,10 +8,6 @@ bool BlockSand::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockSand::clone() {
-	return new BlockSand(x, y, z);
-}
-
 BlockSand::~BlockSand()
 {
 }

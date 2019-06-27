@@ -8,10 +8,6 @@ bool BlockLog::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockLog::clone() {
-	return new BlockLog(x, y, z);
-}
-
 BlockLog::~BlockLog()
 {
 }

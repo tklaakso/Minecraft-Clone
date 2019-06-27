@@ -8,10 +8,6 @@ bool BlockIronOre::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockIronOre::clone() {
-	return new BlockIronOre(x, y, z);
-}
-
 BlockIronOre::~BlockIronOre()
 {
 }

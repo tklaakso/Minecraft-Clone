@@ -8,10 +8,6 @@ bool BlockWater::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockWater::clone() {
-	return new BlockWater(x, y, z);
-}
-
 BlockWater::~BlockWater()
 {
 }

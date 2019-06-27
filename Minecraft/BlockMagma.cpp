@@ -8,10 +8,6 @@ bool BlockMagma::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockMagma::clone() {
-	return new BlockMagma(x, y, z);
-}
-
 BlockMagma::~BlockMagma()
 {
 }

@@ -8,10 +8,6 @@ bool BlockGrass::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockGrass::clone() {
-	return new BlockGrass(x, y, z);
-}
-
 BlockGrass::~BlockGrass()
 {
 }

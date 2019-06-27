@@ -23,6 +23,8 @@ ChunkCoords blockToChunkCoords(int bx, int bz);
 
 RegionCoords chunkToRegionCoords(int cx, int cz);
 
-Block* makeBlock(int id, int x, int y, int z);
+Block* makeBlock(int id, int x, int y, int z, Chunk* parent);
+
+Block* clone(Block* b);
 
 #endif

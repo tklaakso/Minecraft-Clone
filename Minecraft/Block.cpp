@@ -1,5 +1,6 @@
 #include "Block.h"
 #include "Util.h"
+#include "Chunk.h"
 
 unsigned int Block::texture = 0;
 
@@ -98,6 +99,15 @@ Block** Block::getNeighbors() {
 	return neighbors;
 }
 
+Block* Block::setParent(Chunk* parent) {
+	this->parent = parent;
+	return this;
+}
+
+Chunk* Block::getParent() {
+	return parent;
+}
+
 int Block::getX() {
 	return x;
 }
@@ -123,6 +133,9 @@ int Block::getLightValue() {
 }
 
 void Block::calculateLighting() {
+	if (parent != NULL) {
+		parent->updateLightingOnRender();
+	}
 	if (lightValue > 0) {
 		for (int i = 0; i < 6; i++) {
 			if (neighbors[i] != NULL && neighbors[i]->getLightValue() < (1.0f - getTransparency()) * (lightValue - LIGHT_DEPRECIATION)) {

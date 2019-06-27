@@ -8,10 +8,6 @@ bool BlockLeafRed::shouldRenderType() {
 	return renderType;
 }
 
-Block* BlockLeafRed::clone() {
-	return new BlockLeafRed(x, y, z);
-}
-
 BlockLeafRed::~BlockLeafRed()
 {
 }

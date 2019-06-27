@@ -7,7 +7,6 @@ class InvisibleBlock : public Block
 public:
 	InvisibleBlock(int id, int x, int y, int z);
 	bool shouldRenderType() override;
-	virtual Block* clone() = 0;
 	~InvisibleBlock();
 };
 
