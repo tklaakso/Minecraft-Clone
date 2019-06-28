@@ -299,7 +299,7 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
 		int index = blockCoordsToIndex(localX, globalY, localZ);
 		if (blocks[index] == NULL) {
-			if (block != NULL && block->shouldRenderType()) {
+			if (block != NULL) {
 				if (freeBlocks.empty()) {
 					block->setTranslationIndex(numBlocks);
 					blocks[index] = block;
@@ -309,8 +309,8 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 					if (numBlocks != numBlocksRendered) {
 						swapBlockIndices(block, numBlocks, blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
 					}
-					numBlocks++;
 					numBlocksRendered++;
+					numBlocks++;
 					if (update) {
 						updateVAO();
 					}
@@ -334,7 +334,7 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 			}
 		}
 		else {
-			if (block != NULL && block->shouldRenderType()) {
+			if (block != NULL) {
 				int translationIndex = blocks[index]->getTranslationIndex();
 				block->setTranslationIndex(translationIndex);
 				delete blocks[index];
@@ -342,9 +342,17 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 				translations[translationIndex] = glm::vec3(globalX, globalY, globalZ);
 				translationBlocks[translationIndex] = block;
 				textures[translationIndex] = block->getId();
-				if (translationIndex >= numBlocksRendered) {
-					swapBlockIndices(block, translationIndex, blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
-					numBlocksRendered++;
+				if (block->shouldRenderType()) {
+					if (translationIndex >= numBlocksRendered) {
+						swapBlockIndices(block, translationIndex, blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
+						numBlocksRendered++;
+					}
+				}
+				else {
+					if (translationIndex < numBlocksRendered) {
+						swapBlockIndices(block, translationIndex, blockWithTranslationIndex(numBlocksRendered - 1), numBlocksRendered - 1);
+						numBlocksRendered--;
+					}
 				}
 				if (update) {
 					updateVAO();

@@ -143,6 +143,6 @@ const float MOUSE_SENSITIVITY = 0.1f;
 const float BIOME_HEIGHT_BLEND = 0.02f;
 const float BIOME_SPARSITY = 5.0f;
 
-const int LIGHT_DEPRECIATION = 32;
+const int LIGHT_DEPRECIATION = 20;
 
 #endif

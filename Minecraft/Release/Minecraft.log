@@ -1,8 +1,106 @@
-﻿  Chunk.cpp
+﻿  BiomeHeightmapOverworld.cpp
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(12): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(12): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(15): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(15): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(18): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(18): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(21): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(21): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
+  BiomeMap.cpp
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(13): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(14): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(26): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+  Block.cpp
+c:\users\troy\source\repos\minecraft\minecraft\block.cpp(142): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  BlockAir.cpp
+  BlockCactus.cpp
+  BlockCoalOre.cpp
+  BlockDiamondOre.cpp
+  BlockDirt.cpp
+  BlockGoldOre.cpp
+  BlockGrass.cpp
+  BlockGravel.cpp
+  BlockIronOre.cpp
+  BlockLeaf.cpp
+  BlockLeafOrange.cpp
+  BlockLeafRed.cpp
+  BlockLightGrass.cpp
+  BlockLog.cpp
+  BlockMagma.cpp
+  BlockSand.cpp
+  BlockSandstone.cpp
+  Compiling...
+  BlockWater.cpp
+  Chunk.cpp
+  ChunkManager.cpp
+  ChunkThread.cpp
+c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(27): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(106): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(135): warning C4018: '<': signed/unsigned mismatch
+  ChunkThreadPool.cpp
+  ChunkVAO.cpp
+  CompositeStructure.cpp
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(8): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(21): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(61): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(62): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(66): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(78): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(79): warning C4018: '<': signed/unsigned mismatch
+  Entity.cpp
+  InvisibleBlock.cpp
+  Math.cpp
+c:\users\troy\source\repos\minecraft\minecraft\math.cpp(155): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
+  Player.cpp
+c:\users\troy\source\repos\minecraft\minecraft\player.cpp(41): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\player.cpp(42): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+  Region.cpp
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(38): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(40): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(52): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(59): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(60): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(68): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(78): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(103): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\region.cpp(113): warning C4018: '<': signed/unsigned mismatch
+  RegionManager.cpp
+c:\users\troy\source\repos\minecraft\minecraft\regionmanager.cpp(10): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\regionmanager.cpp(23): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\regionmanager.cpp(37): warning C4018: '<': signed/unsigned mismatch
+  SingularStructure.cpp
+c:\users\troy\source\repos\minecraft\minecraft\singularstructure.cpp(18): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\singularstructure.cpp(57): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\singularstructure.cpp(67): warning C4018: '<': signed/unsigned mismatch
+  Structure.cpp
+  StructureCactus.cpp
+  StructureFallTree.cpp
+  StructureSandHut.cpp
+  StructureTree.cpp
+  Util.cpp
+c:\users\troy\source\repos\minecraft\minecraft\util.cpp(130): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\util.cpp(134): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
+  Compiling...
+  World.cpp
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(146): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(170): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(251): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(281): warning C4018: '<': signed/unsigned mismatch
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(319): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(325): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(331): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+  WorldGenerator.cpp
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(42): warning C4018: '<': signed/unsigned mismatch
+  main.cpp
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  2 of 1618 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+  1 of 1618 functions (<0.1%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    1 functions had inline decision re-evaluated but remain unchanged
+    2 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Release\Minecraft.exe
