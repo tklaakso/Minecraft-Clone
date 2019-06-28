@@ -1,8 +1,10 @@
-﻿  Chunk.cpp
+﻿  WorldGenerator.cpp
+c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(43): warning C4018: '<': signed/unsigned mismatch
 LINK : warning LNK4098: defaultlib 'MSVCRTD' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
-  3 of 1627 functions ( 0.2%) were compiled, the rest were copied from previous compilation.
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(74): warning C4715: 'Structure::CompositeStructure::generate': not all control paths return a value
+  12 of 1630 functions ( 0.7%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+    6 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Release\Minecraft.exe

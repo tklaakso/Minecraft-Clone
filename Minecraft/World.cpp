@@ -132,7 +132,6 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 			}
 		}
 		chunk->calculateLighting();
-		chunk->updateLightingOnRender();
 	}
 	else {
 		std::cout << "Error: tried to add block in nonexistent chunk" << std::endl;

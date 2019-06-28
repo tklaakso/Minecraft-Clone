@@ -19,6 +19,7 @@
 #include "BlockSandstone.h"
 #include "BlockLeafOrange.h"
 #include "BlockLeafRed.h"
+#include "BlockStone.h"
 
 FastNoise* WorldGenerator::noise = new FastNoise();
 
@@ -59,31 +60,36 @@ Block** WorldGenerator::getChunkBlocks(int cx, int cy) {
 					if (y < height) {
 						Block* b = NULL;
 						int biome = getBiome(x + cx * CHUNK_WIDTH, z + cy * CHUNK_WIDTH);
-						if (biome == BIOME_DESERT) {
-							b = new BlockSand(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+						if (y < height - 6) {
+							b = new BlockStone(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 						}
-						else if (biome == BIOME_FOREST) {
-							if (y < height - 1) {
-								b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+						else {
+							if (biome == BIOME_DESERT) {
+								b = new BlockSand(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
 							}
-							else {
-								b = new BlockGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+							else if (biome == BIOME_FOREST) {
+								if (y < height - 1) {
+									b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+								}
+								else {
+									b = new BlockGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+								}
 							}
-						}
-						else if (biome == BIOME_JUNGLE) {
-							if (y < height - 1) {
-								b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+							else if (biome == BIOME_JUNGLE) {
+								if (y < height - 1) {
+									b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+								}
+								else {
+									b = new BlockLightGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+								}
 							}
-							else {
-								b = new BlockLightGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
-							}
-						}
-						else if (biome == BIOME_PLAINS) {
-							if (y < height - 1) {
-								b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
-							}
-							else {
-								b = new BlockGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+							else if (biome == BIOME_PLAINS) {
+								if (y < height - 1) {
+									b = new BlockDirt(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+								}
+								else {
+									b = new BlockGrass(x + cx * CHUNK_WIDTH, y, z + cy * CHUNK_WIDTH);
+								}
 							}
 						}
 						b->setTranslationIndex(index);

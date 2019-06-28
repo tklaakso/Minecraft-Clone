@@ -150,6 +150,7 @@
     <ClCompile Include="BlockMagma.cpp" />
     <ClCompile Include="BlockSand.cpp" />
     <ClCompile Include="BlockSandstone.cpp" />
+    <ClCompile Include="BlockStone.cpp" />
     <ClCompile Include="BlockWater.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Chunk.cpp" />
@@ -208,6 +209,7 @@
     <ClInclude Include="BlockMagma.h" />
     <ClInclude Include="BlockSand.h" />
     <ClInclude Include="BlockSandstone.h" />
+    <ClInclude Include="BlockStone.h" />
     <ClInclude Include="BlockWater.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Chunk.h" />

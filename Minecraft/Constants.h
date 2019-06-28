@@ -85,7 +85,7 @@ const int BLOCK_INDICES[] = {
 		20, 23, 22
 };
 
-const int NUM_TEXTURES = 18;
+const int NUM_TEXTURES = 19;
 const int BLOCK_TEXTURE_WIDTH = 48;
 const int BLOCK_TEXTURE_HEIGHT = 48;
 
@@ -132,6 +132,7 @@ const int BLOCK_CACTUS = 14;
 const int BLOCK_SANDSTONE = 15;
 const int BLOCK_LEAF_ORANGE = 16;
 const int BLOCK_LEAF_RED = 17;
+const int BLOCK_STONE = 18;
 
 const int BIOME_FOREST = 0;
 const int BIOME_DESERT = 1;

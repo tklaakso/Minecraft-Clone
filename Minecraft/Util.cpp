@@ -17,6 +17,7 @@
 #include "BlockSandstone.h"
 #include "BlockLeafOrange.h"
 #include "BlockLeafRed.h"
+#include "BlockStone.h"
 
 std::string toString(int i) {
 	std::string outString;
@@ -116,6 +117,8 @@ Block* makeBlock(int id, int x, int y, int z, Chunk* parent) {
 		return (new BlockLeafOrange(x, y, z))->setParent(parent);
 	case BLOCK_LEAF_RED:
 		return (new BlockLeafRed(x, y, z))->setParent(parent);
+	case BLOCK_STONE:
+		return (new BlockStone(x, y, z))->setParent(parent);
 	default:
 		return (new BlockAir(x, y, z))->setParent(parent);
 	}
