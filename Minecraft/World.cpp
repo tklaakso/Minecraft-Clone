@@ -1,15 +1,18 @@
 #include "World.h"
 #include "Constants.h"
+#include "Player.h"
+#include <limits>
 
 RegionManager* World::rm = new RegionManager();
 
-World::World()
+World::World(GLFWwindow* window)
 {
 	cm = new ChunkManager();
 	pool = new ChunkThreadPool(cm, 1);
 	renderDistance = 8;
 	updateLoadedRegions();
 	updateLoadedChunks();
+	player = new Player(window, this);
 }
 
 Block* World::getBlock(int x, int y, int z, Chunk* suspect) {
@@ -94,37 +97,37 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 		}
 		if (left != NULL) {
 			left->updateNeighbors();
-			if (reorderNeighbors) {
+			if (reorderNeighbors && left->shouldRenderType()) {
 				reorderBlock(left, chunk);
 			}
 		}
 		if (right != NULL) {
 			right->updateNeighbors();
-			if (reorderNeighbors) {
+			if (reorderNeighbors && right->shouldRenderType()) {
 				reorderBlock(right, chunk);
 			}
 		}
 		if (up != NULL) {
 			up->updateNeighbors();
-			if (reorderNeighbors) {
+			if (reorderNeighbors && up->shouldRenderType()) {
 				reorderBlock(up, chunk);
 			}
 		}
 		if (down != NULL) {
 			down->updateNeighbors();
-			if (reorderNeighbors) {
+			if (reorderNeighbors && down->shouldRenderType()) {
 				reorderBlock(down, chunk);
 			}
 		}
 		if (front != NULL) {
 			front->updateNeighbors();
-			if (reorderNeighbors) {
+			if (reorderNeighbors && front->shouldRenderType()) {
 				reorderBlock(front, chunk);
 			}
 		}
 		if (back != NULL) {
 			back->updateNeighbors();
-			if (reorderNeighbors) {
+			if (reorderNeighbors && back->shouldRenderType()) {
 				reorderBlock(back, chunk);
 			}
 		}
@@ -251,6 +254,11 @@ void World::render() {
 		}
 	}
 	pool->chunkManagerMutex.unlock();
+	Camera* cam = player->getCamera();
+	Block* b = rayCast(cam->getPosition(), cam->getDirection());
+	if (b != NULL) {
+		setBlock(b->getX(), b->getY(), b->getZ(), makeBlock(BLOCK_AIR, b->getX(), b->getY(), b->getZ(), b->getParent()), true, true);
+	}
 }
 
 void World::makeChunk(int x, int y) {
@@ -289,8 +297,64 @@ void World::deleteRegion(int x, int y) {
 	delete r;
 }
 
+Block* World::rayCast(glm::vec3 origin, glm::vec3 dir) {
+	dir = glm::normalize(dir);
+	glm::vec3 pos = origin;
+	int signX = signum(dir.x);
+	int signY = signum(dir.y);
+	int signZ = signum(dir.z);
+	while (glm::length(pos - origin) < 20) {
+		int blockX = (int)floor(pos.x);
+		int blockY = (int)floor(pos.y);
+		int blockZ = (int)floor(pos.z);
+		Block* b = getBlock(blockX, blockY, blockZ, NULL);
+		if (b != NULL && b->shouldRenderType()) {
+			return b;
+		}
+		glm::vec3 targetX(0, 0, 0), targetY(0, 0, 0), targetZ(0, 0, 0);
+		float distanceX = std::numeric_limits<float>::max();
+		float distanceY = std::numeric_limits<float>::max();
+		float distanceZ = std::numeric_limits<float>::max();
+		if (signX != 0) {
+			float targetXVal = fullRound(pos.x, signX);
+			targetX = pos + dir * ((targetXVal - pos.x) / dir.x);
+			targetX.x = round(targetX.x);
+			distanceX = glm::length(targetX - pos);
+		}
+		if (signY != 0) {
+			float targetYVal = fullRound(pos.y, signY);
+			targetY = pos + dir * ((targetYVal - pos.y) / dir.y);
+			targetY.y = round(targetY.y);
+			distanceY = glm::length(targetY - pos);
+		}
+		if (signZ != 0) {
+			float targetZVal = fullRound(pos.z, signZ);
+			targetZ = pos + dir * ((targetZVal - pos.z) / dir.z);
+			targetZ.z = round(targetZ.z);
+			distanceZ = glm::length(targetZ - pos);
+		}
+		glm::vec3 minDistanceTarget = targetX;
+		float minDistance = distanceX;
+		if (distanceY < minDistance) {
+			minDistanceTarget = targetY;
+			minDistance = distanceY;
+		}
+		if (distanceZ < minDistance) {
+			minDistanceTarget = targetZ;
+			minDistance = distanceZ;
+		}
+		pos = minDistanceTarget;
+	}
+	return NULL;
+}
+
+Player* World::getPlayer() {
+	return player;
+}
+
 World::~World()
 {
 	delete cm;
 	delete pool;
+	delete player;
 }

@@ -14,6 +14,7 @@ public:
 	Player(GLFWwindow* window, World* world);
 	void update(Shader* shader, double deltaTime);
 	glm::mat4 getView();
+	Camera* getCamera();
 	~Player();
 private:
 	float mouseX, mouseY;

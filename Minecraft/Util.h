@@ -27,4 +27,12 @@ Block* makeBlock(int id, int x, int y, int z, Chunk* parent);
 
 Block* clone(Block* b);
 
+int fullFloor(float f);
+
+int fullCeil(float f);
+
+int fullRound(float f, int sign);
+
+int signum(float f);
+
 #endif

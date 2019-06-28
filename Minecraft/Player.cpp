@@ -54,6 +54,10 @@ glm::mat4 Player::getView() {
 	return cam->getView();
 }
 
+Camera* Player::getCamera() {
+	return cam;
+}
+
 Player::~Player()
 {
 	delete cam;

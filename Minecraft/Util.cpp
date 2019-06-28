@@ -125,3 +125,31 @@ Block* clone(Block* b) {
 	assert(b != NULL);
 	return makeBlock(b->getId(), b->getX(), b->getY(), b->getZ(), b->getParent());
 }
+
+int fullFloor(float f) {
+	return (int)f == f ? f - 1 : floor(f);
+}
+
+int fullCeil(float f) {
+	return (int)f == f ? f + 1 : ceil(f);
+}
+
+int fullRound(float f, int sign) {
+	assert(sign == -1 || sign == 1);
+	if (sign == -1) {
+		return fullFloor(f);
+	}
+	else {
+		return fullCeil(f);
+	}
+}
+
+int signum(float f) {
+	if (f == 0) {
+		return 0;
+	}
+	else if (f > 0) {
+		return 1;
+	}
+	return -1;
+}

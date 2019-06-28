@@ -299,7 +299,7 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
 		int index = blockCoordsToIndex(localX, globalY, localZ);
 		if (blocks[index] == NULL) {
-			if (block != NULL) {
+			if (block != NULL && block->shouldRenderType()) {
 				if (freeBlocks.empty()) {
 					block->setTranslationIndex(numBlocks);
 					blocks[index] = block;
@@ -334,7 +334,7 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 			}
 		}
 		else {
-			if (block != NULL) {
+			if (block != NULL && block->shouldRenderType()) {
 				int translationIndex = blocks[index]->getTranslationIndex();
 				block->setTranslationIndex(translationIndex);
 				delete blocks[index];
@@ -365,6 +365,8 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 	else {
 		std::cout << "Error: block not within chunk range" << std::endl;
 	}
+	calculateLighting();
+	updateLightingOnRender();
 }
 
 void Chunk::reorderBlocks() {
