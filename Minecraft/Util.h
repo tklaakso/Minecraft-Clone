@@ -35,4 +35,6 @@ int fullRound(float f, int sign);
 
 int signum(float f);
 
+glm::vec3 neighborPositionToVector(int pos);
+
 #endif

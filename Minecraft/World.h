@@ -10,6 +10,7 @@
 #include "ChunkThreadPool.h"
 #include "RegionManager.h"
 #include <GLFW/glfw3.h>
+#include "BlockCastInfo.h"
 
 class Player;
 
@@ -36,12 +37,13 @@ public:
 	bool regionExists(int x, int y);
 	void updateLoadedChunks();
 	void updateLoadedRegions();
-	Block* rayCast(glm::vec3 origin, glm::vec3 dir);
+	BlockCastInfo blockCast(glm::vec3 origin, glm::vec3 dir);
 	int renderDistance;
 	Player* getPlayer();
 	static RegionManager* rm;
 private:
 	Player* player;
+	Block* selectedBlock = NULL;
 	int playerChunkX, playerChunkY;
 	ChunkThreadPool* pool;
 	ChunkManager* cm;

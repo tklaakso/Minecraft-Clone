@@ -27,6 +27,7 @@ int main() {
 	GLFWwindow* window = initGLFW(screenWidth, screenHeight, "Minecraft");
 	glfwSetKeyCallback(window, Input::keyEvent);
 	glfwSetCursorPosCallback(window, Input::mouseEvent);
+	glfwSetMouseButtonCallback(window, Input::mouseButtonEvent);
 	if (window == NULL) {
 		return -1;
 	}

@@ -153,3 +153,22 @@ int signum(float f) {
 	}
 	return -1;
 }
+
+glm::vec3 neighborPositionToVector(int pos) {
+	switch (pos) {
+	case BLOCK_NEIGHBOR_LEFT:
+		return glm::vec3(-1, 0, 0);
+	case BLOCK_NEIGHBOR_RIGHT:
+		return glm::vec3(1, 0, 0);
+	case BLOCK_NEIGHBOR_UP:
+		return glm::vec3(0, 1, 0);
+	case BLOCK_NEIGHBOR_DOWN:
+		return glm::vec3(0, -1, 0);
+	case BLOCK_NEIGHBOR_FRONT:
+		return glm::vec3(0, 0, -1);
+	case BLOCK_NEIGHBOR_BACK:
+		return glm::vec3(0, 0, 1);
+	default:
+		return glm::vec3(-1, 0, 0);
+	}
+}

@@ -131,6 +131,8 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 				reorderBlock(back, chunk);
 			}
 		}
+		chunk->calculateLighting();
+		chunk->updateLightingOnRender();
 	}
 	else {
 		std::cout << "Error: tried to add block in nonexistent chunk" << std::endl;
@@ -255,9 +257,16 @@ void World::render() {
 	}
 	pool->chunkManagerMutex.unlock();
 	Camera* cam = player->getCamera();
-	Block* b = rayCast(cam->getPosition(), cam->getDirection());
-	if (b != NULL) {
-		setBlock(b->getX(), b->getY(), b->getZ(), makeBlock(BLOCK_AIR, b->getX(), b->getY(), b->getZ(), b->getParent()), true, true);
+	BlockCastInfo info = blockCast(cam->getPosition(), cam->getDirection());
+	selectedBlock = info.block;
+	if (selectedBlock != NULL) {
+		if (Input::mouseClicked(GLFW_MOUSE_BUTTON_LEFT)) {
+			setBlock(selectedBlock->getX(), selectedBlock->getY(), selectedBlock->getZ(), makeBlock(BLOCK_AIR, selectedBlock->getX(), selectedBlock->getY(), selectedBlock->getZ(), selectedBlock->getParent()), true, true);
+		}
+		else if (Input::mouseClicked(GLFW_MOUSE_BUTTON_RIGHT)) {
+			glm::vec3 relativeVector = neighborPositionToVector(info.face);
+			setBlock(selectedBlock->getX() + (int)relativeVector.x, selectedBlock->getY() + (int)relativeVector.y, selectedBlock->getZ() + (int)relativeVector.z, makeBlock(BLOCK_GRASS, selectedBlock->getX() + (int)relativeVector.x, selectedBlock->getY() + (int)relativeVector.y, selectedBlock->getZ() + (int)relativeVector.z, selectedBlock->getParent()), true, true);
+		}
 	}
 }
 
@@ -297,19 +306,20 @@ void World::deleteRegion(int x, int y) {
 	delete r;
 }
 
-Block* World::rayCast(glm::vec3 origin, glm::vec3 dir) {
+BlockCastInfo World::blockCast(glm::vec3 origin, glm::vec3 dir) {
 	dir = glm::normalize(dir);
 	glm::vec3 pos = origin;
 	int signX = signum(dir.x);
 	int signY = signum(dir.y);
 	int signZ = signum(dir.z);
+	int face = 0;
 	while (glm::length(pos - origin) < 20) {
-		int blockX = (int)floor(pos.x);
-		int blockY = (int)floor(pos.y);
-		int blockZ = (int)floor(pos.z);
+		int blockX = fullFloor(pos.x) + (signX == 1 && pos.x == (int)pos.x ? 1 : 0);
+		int blockY = fullFloor(pos.y) + (signY == 1 && pos.y == (int)pos.y ? 1 : 0);
+		int blockZ = fullFloor(pos.z) + (signZ == 1 && pos.z == (int)pos.z ? 1 : 0);
 		Block* b = getBlock(blockX, blockY, blockZ, NULL);
 		if (b != NULL && b->shouldRenderType()) {
-			return b;
+			return BlockCastInfo(b, face);
 		}
 		glm::vec3 targetX(0, 0, 0), targetY(0, 0, 0), targetZ(0, 0, 0);
 		float distanceX = std::numeric_limits<float>::max();
@@ -335,17 +345,20 @@ Block* World::rayCast(glm::vec3 origin, glm::vec3 dir) {
 		}
 		glm::vec3 minDistanceTarget = targetX;
 		float minDistance = distanceX;
+		face = signX > 0 ? BLOCK_NEIGHBOR_LEFT : BLOCK_NEIGHBOR_RIGHT;
 		if (distanceY < minDistance) {
 			minDistanceTarget = targetY;
 			minDistance = distanceY;
+			face = signY > 0 ? BLOCK_NEIGHBOR_DOWN : BLOCK_NEIGHBOR_UP;
 		}
 		if (distanceZ < minDistance) {
 			minDistanceTarget = targetZ;
 			minDistance = distanceZ;
+			face = signZ > 0 ? BLOCK_NEIGHBOR_FRONT : BLOCK_NEIGHBOR_BACK;
 		}
 		pos = minDistanceTarget;
 	}
-	return NULL;
+	return BlockCastInfo(NULL, 0);
 }
 
 Player* World::getPlayer() {

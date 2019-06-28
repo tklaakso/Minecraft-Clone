@@ -227,12 +227,13 @@ void Chunk::updateBlockNeighbors() {
 void Chunk::calculateLighting() {
 	for (int x = 0; x < CHUNK_WIDTH; x++) {
 		for (int z = 0; z < CHUNK_WIDTH; z++) {
+			int lightValue = 255;
 			for (int y = CHUNK_HEIGHT - 1; y >= 0; y--) {
 				int index = blockCoordsToIndex(x, y, z);
 				if (blocks[index] != NULL) {
-					blocks[index]->setLightValue(255);
+					blocks[index]->setLightValue(lightValue);
 					if (blocks[index]->shouldRenderType()) {
-						break;
+						lightValue = 0;
 					}
 				}
 			}
@@ -373,8 +374,6 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 	else {
 		std::cout << "Error: block not within chunk range" << std::endl;
 	}
-	calculateLighting();
-	updateLightingOnRender();
 }
 
 void Chunk::reorderBlocks() {

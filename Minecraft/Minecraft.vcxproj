@@ -133,6 +133,7 @@
     <ClCompile Include="Block.cpp" />
     <ClCompile Include="BlockAir.cpp" />
     <ClCompile Include="BlockCactus.cpp" />
+    <ClCompile Include="BlockCastInfo.cpp" />
     <ClCompile Include="BlockCoalOre.cpp" />
     <ClCompile Include="BlockCoords.cpp" />
     <ClCompile Include="BlockDiamondOre.cpp" />
@@ -190,6 +191,7 @@
     <ClInclude Include="Block.h" />
     <ClInclude Include="BlockAir.h" />
     <ClInclude Include="BlockCactus.h" />
+    <ClInclude Include="BlockCastInfo.h" />
     <ClInclude Include="BlockCoalOre.h" />
     <ClInclude Include="BlockCoords.h" />
     <ClInclude Include="BlockDiamondOre.h" />
