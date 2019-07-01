@@ -67,7 +67,7 @@ void Block::updateNeighbors() {
 		return;
 	}
 	for (int i = 0; i < 6; i++) {
-		if (neighbors[i] == NULL || !neighbors[i]->shouldRenderType()) {
+		if (neighbors[i] != NULL && !neighbors[i]->shouldRenderType()) {
 			render = true;
 			return;
 		}

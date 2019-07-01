@@ -475,8 +475,10 @@ void Chunk::render() {
 		shouldUpdateVAO = false;
 	}
 	if (insideViewFrustum) {
-		vao->bind();
-		glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, numBlocksRendered);
+		for (int i = 0; i < 6; i++) {
+			vao->bind(i);
+			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, numBlocksRendered);
+		}
 	}
 }
 

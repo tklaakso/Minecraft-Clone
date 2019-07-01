@@ -2,87 +2,124 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-const int NUM_BLOCK_UVS = 48;
+const int NUM_BLOCK_UVS = 8;
 
-const float BLOCK_UVS[] = {
-	// Front
+const float BLOCK_UVS_FRONT[] = {
 	0.0f, 0.0f, // 0
 	0.3333333f, 0.0f, // 1
 	0.3333333f, 0.3333333f, // 2
 	0.0f, 0.3333333f, // 3
-	// Back
+};
+
+const float BLOCK_UVS_BACK[] = {
 	0.6666666f, 0.0f, // 4
 	1.0f, 0.0f, // 5
 	1.0f, 0.3333333f, // 6
 	0.6666666f, 0.3333333f, // 7
-	// Left
+};
+
+const float BLOCK_UVS_LEFT[] = {
 	0.6666666f, 0.3333333f, // 8
 	0.3333333f, 0.3333333f, // 9
 	0.3333333f, 0.6666666f, // 10
 	0.6666666f, 0.6666666f, // 11
-	// Right
+};
+
+const float BLOCK_UVS_RIGHT[] = {
 	1.0f, 0.3333333f, // 12
 	0.6666666f, 0.3333333f, // 13
 	0.6666666f, 0.6666666f, // 14
 	1.0f, 0.6666666f, // 15
-	// Top
+};
+
+const float BLOCK_UVS_TOP[] = {
 	0.3333333f, 0.0f, // 16
 	0.3333333f, 0.3333333f, // 17
 	0.6666666f, 0.3333333f, // 18
 	0.6666666f, 0.0f, // 19
-	// Bottom
+};
+
+const float BLOCK_UVS_BOTTOM[] = {
 	0.0f, 0.3333333f, // 20
 	0.0f, 0.6666666f, // 21
 	0.3333333f, 0.6666666f, // 22
-	0.3333333f, 0.3333333f // 23
+	0.3333333f, 0.3333333f, // 23
 };
 
-const float BLOCK_VERTICES[] = {
-	// Front
+const int NUM_BLOCK_VERTICES = 12;
+
+const float BLOCK_VERTICES_FRONT[] = {
 	-0.5f, -0.5f, -0.5f, // 0
 	0.5f, -0.5f, -0.5f, // 1
 	0.5f, 0.5f, -0.5f, // 2
 	-0.5f, 0.5f, -0.5f, // 3
-	// Back
+};
+
+const float BLOCK_VERTICES_BACK[] = {
 	-0.5f, -0.5f, 0.5f, // 4
 	0.5f, -0.5f, 0.5f, // 5
 	0.5f, 0.5f, 0.5f, // 6
 	-0.5f, 0.5f, 0.5f, // 7
-	// Left
+};
+
+const float BLOCK_VERTICES_LEFT[] = {
 	-0.5f, -0.5f, -0.5f, // 8
 	-0.5f, -0.5f, 0.5f, // 9
 	-0.5f, 0.5f, 0.5f, // 10
 	-0.5f, 0.5f, -0.5f, // 11
-	// Right
+};
+
+const float BLOCK_VERTICES_RIGHT[] = {
 	0.5f, -0.5f, -0.5f, // 12
 	0.5f, -0.5f, 0.5f, // 13
 	0.5f, 0.5f, 0.5f, // 14
 	0.5f, 0.5f, -0.5f, // 15
-	// Top
+};
+
+const float BLOCK_VERTICES_TOP[] = {
 	-0.5f, 0.5f, -0.5f, // 16
 	-0.5f, 0.5f, 0.5f, // 17
 	0.5f, 0.5f, 0.5f, // 18
 	0.5f, 0.5f, -0.5f, // 19
-	// Bottom
+};
+
+const float BLOCK_VERTICES_BOTTOM[] = {
 	-0.5f, -0.5f, -0.5f, // 20
 	-0.5f, -0.5f, 0.5f, // 21
 	0.5f, -0.5f, 0.5f, // 22
-	0.5f, -0.5f, -0.5f // 23
+	0.5f, -0.5f, -0.5f, // 23
 };
 
-const int BLOCK_INDICES[] = {
-		0, 2, 1,
-		0, 3, 2,
-		4, 5, 6,
-		4, 6, 7,
-		8, 9, 10,
-		8, 10, 11,
-		12, 14, 13,
-		12, 15, 14,
-		16, 17, 18,
-		16, 18, 19,
-		20, 22, 21,
-		20, 23, 22
+const int NUM_BLOCK_INDICES = 6;
+
+const int BLOCK_INDICES_FRONT[] = {
+	0, 2, 1,
+	0, 3, 2,
+};
+
+const int BLOCK_INDICES_BACK[] = {
+	0, 1, 2,
+	0, 2, 3,
+};
+
+const int BLOCK_INDICES_LEFT[] = {
+	0, 1, 2,
+	0, 2, 3,
+};
+
+const int BLOCK_INDICES_RIGHT[] = {
+	0, 2, 1,
+	0, 3, 2,
+};
+
+const int BLOCK_INDICES_TOP[] = {
+	0, 1, 2,
+	0, 2, 3,
+};
+
+const int BLOCK_INDICES_BOTTOM[] = {
+	0, 2, 1,
+	0, 3, 2,
 };
 
 const int NUM_TEXTURES = 19;
