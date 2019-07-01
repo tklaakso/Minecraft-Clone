@@ -27,8 +27,8 @@ public:
 	int getY();
 	int getZ();
 	int getId();
-	void setLightValue(int lightValue);
-	int getLightValue();
+	void setLightValue(int lightValue, int face);
+	int getLightValue(int face);
 	float getTransparency();
 	void calculateLighting();
 	void calculateNeighborLighting();
@@ -40,7 +40,7 @@ private:
 	static unsigned int texture;
 	int translationIndex;
 	int type;
-	int lightValue = 0;
+	int* lightValue;
 	float transparency = 1.0f;
 	bool render;
 protected:

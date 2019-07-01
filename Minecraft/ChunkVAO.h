@@ -12,7 +12,7 @@ public:
 	~ChunkVAO();
 	void updateTranslationData(glm::vec3* translations, int len);
 	void updateTextureData(int* textures, int len);
-	void updateLightmapData(int* lightMap, int len);
+	void updateLightmapData(int** lightMap, int len);
 	void bind(int face);
 	unsigned int* vertexVBO;
 	unsigned int* EBO;

@@ -37,4 +37,6 @@ int signum(float f);
 
 glm::vec3 neighborPositionToVector(int pos);
 
+int getOppositeNeighbor(int neighbor);
+
 #endif

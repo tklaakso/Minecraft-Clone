@@ -175,3 +175,20 @@ glm::vec3 neighborPositionToVector(int pos) {
 		return glm::vec3(-1, 0, 0);
 	}
 }
+
+int getOppositeNeighbor(int neighbor) {
+	switch (neighbor) {
+	case BLOCK_NEIGHBOR_LEFT:
+		return BLOCK_NEIGHBOR_RIGHT;
+	case BLOCK_NEIGHBOR_RIGHT:
+		return BLOCK_NEIGHBOR_LEFT;
+	case BLOCK_NEIGHBOR_UP:
+		return BLOCK_NEIGHBOR_DOWN;
+	case BLOCK_NEIGHBOR_DOWN:
+		return BLOCK_NEIGHBOR_UP;
+	case BLOCK_NEIGHBOR_FRONT:
+		return BLOCK_NEIGHBOR_BACK;
+	case BLOCK_NEIGHBOR_BACK:
+		return BLOCK_NEIGHBOR_FRONT;
+	}
+}

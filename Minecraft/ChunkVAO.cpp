@@ -128,13 +128,13 @@ void ChunkVAO::updateTextureData(int* textures, int len) {
 
 }
 
-void ChunkVAO::updateLightmapData(int* lightMap, int len) {
+void ChunkVAO::updateLightmapData(int** lightMap, int len) {
 
 	for (int i = 0; i < 6; i++) {
 
 		bind(i);
 		glBindBuffer(GL_ARRAY_BUFFER, lightmapVBO[i]);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(int) * len, &lightMap[0], GL_STATIC_DRAW);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(int) * len, &lightMap[i][0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 	}

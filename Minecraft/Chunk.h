@@ -61,7 +61,7 @@ private:
 	Block** prevBlocks;
 	Block** blocks;
 	Block** translationBlocks;
-	int* lightMap;
+	int** lightMap;
 	queue<int> freeBlocks;
 	ChunkThreadPool* pool;
 };

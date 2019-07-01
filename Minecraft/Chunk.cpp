@@ -46,13 +46,15 @@ void Chunk::setVAO(ChunkVAO* vao, int vaoIndex) {
 void Chunk::swapBlockIndices(Block* b1, int index1, Block* b2, int index2) {
 	glm::vec3 tempTranslation = translations[index1];
 	int tempTexture = textures[index1];
-	int tempLight = lightMap[index1];
+	for (int i = 0; i < 6; i++) {
+		int tempLight = lightMap[i][index1];
+		lightMap[i][index1] = lightMap[i][index2];
+		lightMap[i][index2] = tempLight;
+	}
 	translations[index1] = translations[index2];
 	textures[index1] = textures[index2];
-	lightMap[index1] = lightMap[index2];
 	translations[index2] = tempTranslation;
 	textures[index2] = tempTexture;
-	lightMap[index2] = tempLight;
 	translationBlocks[index1] = b2;
 	translationBlocks[index2] = b1;
 	if (b1 != NULL) {
@@ -81,10 +83,15 @@ void Chunk::generate(WorldGenerator* gen) {
 	translationBlocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK);
 	textures = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
 	blocks = gen->getChunkBlocks(x, y);
-	lightMap = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
+	lightMap = (int**)malloc(sizeof(int*) * 6);
+	for (int i = 0; i < 6; i++) {
+		lightMap[i] = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
+	}
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		translationBlocks[i] = NULL;
-		lightMap[i] = 0;
+		for (int j = 0; j < 6; j++) {
+			lightMap[j][i] = 0;
+		}
 		if (blocks[i] != NULL) {
 			blocks[i]->setParent(this);
 		}
@@ -217,7 +224,9 @@ void Chunk::updateBlockNeighbors() {
 			translations[numBlocks] = glm::vec3(gx, gy, gz);
 			translationBlocks[numBlocks] = blocks[i];
 			textures[numBlocks] = blocks[i]->getId();
-			lightMap[numBlocks] = 0;
+			for (int j = 0; j < 6; j++) {
+				lightMap[j][numBlocks] = 0;
+			}
 			numBlocks++;
 			numBlocksRendered++;
 		}
@@ -231,7 +240,10 @@ void Chunk::calculateLighting() {
 			for (int y = CHUNK_HEIGHT - 1; y >= 0; y--) {
 				int index = blockCoordsToIndex(x, y, z);
 				if (blocks[index] != NULL) {
-					blocks[index]->setLightValue(lightValue);
+					for (int i = 0; i < 6; i++) {
+						blocks[index]->setLightValue(0, i);
+					}
+					blocks[index]->setLightValue(lightValue, BLOCK_NEIGHBOR_UP);
 					if (blocks[index]->shouldRenderType()) {
 						lightValue = 0;
 					}
@@ -258,7 +270,9 @@ void Chunk::calculateLighting() {
 void Chunk::makeLightmap() {
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 		if (blocks[i] != NULL) {
-			lightMap[blocks[i]->getTranslationIndex()] = blocks[i]->getLightValue();
+			for (int j = 0; j < 6; j++) {
+				lightMap[j][blocks[i]->getTranslationIndex()] = blocks[i]->getLightValue(j);
+			}
 		}
 	}
 }
@@ -536,6 +550,9 @@ Chunk::~Chunk()
 	free(translations);
 	free(translationBlocks);
 	free(textures);
+	for (int i = 0; i < 6; i++) {
+		free(lightMap[i]);
+	}
 	free(lightMap);
 	free(neighbors);
 }

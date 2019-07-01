@@ -59,6 +59,10 @@ Block::Block(int id, int x, int y, int z)
 	for (int i = 0; i < 6; i++) {
 		neighbors[i] = NULL;
 	}
+	lightValue = (int*)malloc(sizeof(int) * 6);
+	for (int i = 0; i < 6; i++) {
+		lightValue[i] = 0;
+	}
 }
 
 void Block::updateNeighbors() {
@@ -124,22 +128,31 @@ int Block::getId() {
 	return type;
 }
 
-void Block::setLightValue(int lightValue) {
-	this->lightValue = lightValue;
+void Block::setLightValue(int lightValue, int face) {
+	this->lightValue[face] = lightValue;
 }
 
-int Block::getLightValue() {
-	return lightValue;
+int Block::getLightValue(int face) {
+	return lightValue[face];
 }
 
 void Block::calculateLighting() {
 	if (parent != NULL) {
 		parent->updateLightingOnRender();
 	}
-	if (lightValue > 0) {
+	int maxLightValue = 0;
+	for (int i = 0; i < 6; i++) {
+		maxLightValue = max(maxLightValue, lightValue[i]);
+	}
+	if (maxLightValue > 0) {
+		if (getTransparency() == 0.0f) {
+			for (int i = 0; i < 6; i++) {
+				lightValue[i] = maxLightValue;
+			}
+		}
 		for (int i = 0; i < 6; i++) {
-			if (neighbors[i] != NULL && neighbors[i]->getLightValue() < (1.0f - getTransparency()) * (lightValue - LIGHT_DEPRECIATION)) {
-				neighbors[i]->setLightValue((1.0f - getTransparency()) * (lightValue - LIGHT_DEPRECIATION));
+			if (neighbors[i] != NULL && neighbors[i]->getLightValue(getOppositeNeighbor(i)) < (1.0f - getTransparency()) * (lightValue[i] - LIGHT_DEPRECIATION)) {
+				neighbors[i]->setLightValue((1.0f - getTransparency()) * (lightValue[i] - LIGHT_DEPRECIATION), getOppositeNeighbor(i));
 				neighbors[i]->calculateLighting();
 			}
 		}
@@ -165,4 +178,5 @@ float Block::getTransparency() {
 Block::~Block()
 {
 	free(neighbors);
+	free(lightValue);
 }
