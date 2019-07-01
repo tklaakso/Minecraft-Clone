@@ -13,5 +13,5 @@ void main()
 		discard;
 	}
 	float scale = float(Lightmap) / 255.0;
-	FragColor = texture(textures, vec3(TexCoord, Texture)) * scale * fog + vec4(1.0, 1.0, 1.0, 1.0) * (1.0 - fog);
+	FragColor = texture(textures, vec3(TexCoord, Texture)) * scale * fog + vec4(1.0, 1.0, 0.0, 1.0) * (1.0 - fog);
 }

@@ -51,6 +51,7 @@ public:
 	~Chunk();
 private:
 	bool updateLighting;
+	bool calculateLightingRender;
 	bool insideViewFrustum;
 	bool shouldUpdateVAO;
 	void swapBlockIndices(Block* b1, int index1, Block* b2, int index2);
