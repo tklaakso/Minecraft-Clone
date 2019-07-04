@@ -96,37 +96,37 @@ void World::setBlock(int x, int y, int z, Block* block, bool update, bool reorde
 			back->getNeighbors()[BLOCK_NEIGHBOR_FRONT] = block;
 		}
 		if (left != NULL) {
-			left->updateNeighbors();
+			left->determineRendering();
 			if (reorderNeighbors && left->shouldRenderType()) {
 				reorderBlock(left, chunk);
 			}
 		}
 		if (right != NULL) {
-			right->updateNeighbors();
+			right->determineRendering();
 			if (reorderNeighbors && right->shouldRenderType()) {
 				reorderBlock(right, chunk);
 			}
 		}
 		if (up != NULL) {
-			up->updateNeighbors();
+			up->determineRendering();
 			if (reorderNeighbors && up->shouldRenderType()) {
 				reorderBlock(up, chunk);
 			}
 		}
 		if (down != NULL) {
-			down->updateNeighbors();
+			down->determineRendering();
 			if (reorderNeighbors && down->shouldRenderType()) {
 				reorderBlock(down, chunk);
 			}
 		}
 		if (front != NULL) {
-			front->updateNeighbors();
+			front->determineRendering();
 			if (reorderNeighbors && front->shouldRenderType()) {
 				reorderBlock(front, chunk);
 			}
 		}
 		if (back != NULL) {
-			back->updateNeighbors();
+			back->determineRendering();
 			if (reorderNeighbors && back->shouldRenderType()) {
 				reorderBlock(back, chunk);
 			}
@@ -247,7 +247,7 @@ void World::updatePlayerChunkPosition(int chunkX, int chunkY) {
 }
 
 void World::render() {
-	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::getTexture());
+	glBindTexture(GL_TEXTURE_2D_ARRAY, Block::getBlockArrayTexture());
 	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
 		if ((*(cm->chunks))[i]->state == Chunk::RENDERING) {

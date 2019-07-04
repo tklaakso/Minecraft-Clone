@@ -133,7 +133,6 @@ int main() {
 	
 	delete world;
 
-	Block::deInitialize();
 	Input::deInitialize();
 
 	glfwTerminate();

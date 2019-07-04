@@ -33,9 +33,9 @@ void ChunkThread::updateCreationQueue() {
 		chunkMutex->unlock();
 		if (c->state == Chunk::WAITING_FOR_GENERATE) {
 			chunkManagerMutex->lock();
-			int chunksActive = Chunk::chunksInPlay;
+			int chunksActive = Chunk::chunksActive;
 			chunkManagerMutex->unlock();
-			if (chunksActive < 300) {
+			if (chunksActive < 400) {
 				c->state = Chunk::GENERATING;
 				ChunkVAO* vao;
 				int vaoIndex;
@@ -87,7 +87,8 @@ void ChunkThread::updateCreationQueue() {
 				c->updateBlockNeighbors();
 				c->calculateLighting();
 				c->makeLightmap();
-				c->bake();
+				c->reorderBlocks();
+				c->updateVAO();
 				c->bakeNeighbors();
 				c->state = Chunk::RENDERING;
 			}
