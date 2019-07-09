@@ -22,7 +22,6 @@ public:
 	void render();
 	void exit();
 	void setBlock(int x, int y, int z, Block* block, bool update, bool reorderNeighbors);
-	void updateViewFrustum(ViewFrustum* frustum);
 	void updateRendering(Block* block, Chunk* suspect);
 	Block* getBlock(int x, int y, int z, Chunk* suspect);
 	void reorderBlocks();

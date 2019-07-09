@@ -42,7 +42,7 @@ void World::updateRendering(Block* block, Chunk* suspect) {
 		pool->chunkManagerMutex.unlock();
 	}
 	if (c != NULL) {
-		c->textures[block->getTranslationIndex()] = block->shouldRender() ? block->getId() : -1;
+		c->getManager()->textures[block->getTranslationIndex()] = block->shouldRender() ? block->getId() : -1;
 	}
 }
 
@@ -154,7 +154,7 @@ void World::reorderBlock(Block* block, Chunk* suspect) {
 	int x = block->getX(), y = block->getY(), z = block->getZ();
 	if (suspect->blockInChunk(x, y, z)) {
 		suspect->reorderBlock(block);
-		suspect->updateVAO();
+		suspect->getManager()->updateVAO();
 	}
 	else {
 		ChunkCoords coords = blockToChunkCoords(x, z);
@@ -162,14 +162,14 @@ void World::reorderBlock(Block* block, Chunk* suspect) {
 		Chunk* c = findChunkWithCoords(cm->chunks, &coords, 0, cm->chunks->size() - 1);
 		pool->chunkManagerMutex.unlock();
 		c->reorderBlock(block);
-		c->updateVAO();
+		c->getManager()->updateVAO();
 	}
 }
 
 void World::updateChunkVAOs() {
 	pool->chunkManagerMutex.lock();
 	for (int i = 0; i < cm->chunks->size(); i++) {
-		(*(cm->chunks))[i]->updateVAO();
+		(*(cm->chunks))[i]->getManager()->updateVAO();
 	}
 	pool->chunkManagerMutex.unlock();
 }
@@ -271,7 +271,7 @@ void World::render() {
 
 void World::makeChunk(int x, int y) {
 	if (!chunkExists(x, y)) {
-		Chunk* c = new Chunk(x, y, pool);
+		Chunk* c = new Chunk(x, y, pool, cm);
 		pool->createChunk(c);
 	}
 }
@@ -282,14 +282,6 @@ void World::makeRegion(int x, int y) {
 		r->generate();
 		rm->addRegion(r);
 	}
-}
-
-void World::updateViewFrustum(ViewFrustum* frustum) {
-	pool->chunkManagerMutex.lock();
-	for (int i = 0; i < cm->chunks->size(); i++) {
-		(*(cm->chunks))[i]->updateViewFrustum(frustum);
-	}
-	pool->chunkManagerMutex.unlock();
 }
 
 void World::deleteChunk(int x, int y) {

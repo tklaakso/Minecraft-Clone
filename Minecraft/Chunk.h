@@ -9,6 +9,8 @@
 
 class ChunkThreadPool;
 
+class ChunkManager;
+
 class Chunk
 {
 public:
@@ -16,17 +18,12 @@ public:
 	/*
 	Create chunk with VAO parameter
 	*/
-	Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool);
+	Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool, ChunkManager* manager);
 
 	/*
 	Create chunk without VAO parameter
 	*/
-	Chunk(int x, int y, ChunkThreadPool* pool);
-
-	/*
-	Set chunk VAO separately
-	*/
-	void setVAO(ChunkVAO* vao, int vaoIndex);
+	Chunk(int x, int y, ChunkThreadPool* pool, ChunkManager* manager);
 
 	/*
 	Set a block inside this chunk based on its global coordinates
@@ -77,11 +74,6 @@ public:
 	void bakeNeighbors();
 
 	/*
-	Sets a flag which updates VAO with translation, texture and lightmap data before the next render call (VAO updates must be done on main thread, which isn't necessarily the caller)
-	*/
-	void updateVAO();
-
-	/*
 	Compares this chunk with another with x being the most significant coordinate
 	*/
 	int compare(Chunk* other);
@@ -102,41 +94,18 @@ public:
 	void reorderBlock(Block* block);
 
 	/*
-	Updates whether or not this chunk is contained in the view frustum
-	*/
-	void updateViewFrustum(ViewFrustum* frustum);
-
-	/*
 	Render this chunk
 	*/
 	void render();
 
+	ChunkManager* getManager();
+
 public:
-
-	/*
-	VAO for this chunk
-	*/
-	ChunkVAO* vao;
-
-	/*
-	Index of this chunk's VAO within the reusable chunk VAO array
-	*/
-	int vaoIndex;
 
 	/*
 	Coordinates of this chunk (in chunk coordinates)
 	*/
 	int x, y;
-
-	/*
-	Translations of blocks within this chunk, indexed by their translation indices
-	*/
-	glm::vec3* translations;
-
-	/*
-	Textures of blocks within this chunk, indexed by their translation indices
-	*/
-	int* textures;
 
 	/*
 	Integer-coded state of this chunk
@@ -173,59 +142,13 @@ private:
 	bool updateLighting;
 
 	/*
-	Stores whether or not this chunk is inside the view frustum
-	*/
-	bool insideViewFrustum;
-
-	/*
-	Flag controlling whether this chunk should update its VAO before the next render call
-	*/
-	bool shouldUpdateVAO;
-
-	/*
-	Swaps indices of b1 and b2 in translation, texture and lighmap arrays
-	*/
-	void swapBlockIndices(Block* b1, int index1, Block* b2, int index2);
-
-	/*
-	Retrieves the block with a given translation index
-	*/
-	Block* blockWithTranslationIndex(int translationIndex);
-
-	/*
-	Number of blocks existing in this chunk
-	*/
-	int numBlocks;
-
-	/*
-	Number of blocks currently rendered in this chunk
-	*/
-	int numBlocksRendered;
-
-	/*
-	Stores blocks in this chunk with indices defined by their spatial coordinates
-	*/
-	Block** blocks;
-
-	/*
-	Mapping of translation indices to blocks for fast retrieval
-	*/
-	Block** translationBlocks;
-
-	/*
-	Stores light values for each face of each block in this chunk
-	*/
-	int** lightMap;
-
-	/*
-	Queue of indices of blocks that were deleted and may be freely replaced with new blocks
-	*/
-	queue<int> freeBlocks;
-
-	/*
 	Reference to the chunk thread pool handling threaded chunk creation, finalization and deletion
 	*/
 	ChunkThreadPool* pool;
+
+	ChunkManager* manager;
+
+	int id;
 
 };
 

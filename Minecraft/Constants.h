@@ -122,6 +122,8 @@ const int BLOCK_INDICES_BOTTOM[] = {
 	0, 3, 2,
 };
 
+const int CHUNK_CAP = 300;
+
 const int NUM_TEXTURES = 19;
 const int BLOCK_TEXTURE_WIDTH = 48;
 const int BLOCK_TEXTURE_HEIGHT = 48;

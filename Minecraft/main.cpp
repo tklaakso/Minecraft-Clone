@@ -120,7 +120,6 @@ int main() {
 		shader->use();
 
 		frustum->update(projection * view);
-		world->updateViewFrustum(frustum);
 		
 		world->render();
 

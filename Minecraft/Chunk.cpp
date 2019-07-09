@@ -2,10 +2,11 @@
 #include "Constants.h"
 #include "Util.h"
 #include "ChunkThreadPool.h"
+#include "ChunkManager.h"
 
 int Chunk::chunksActive = 0;
 
-Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool)
+Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool, ChunkManager* manager)
 {
 
 	this->pool = pool;
@@ -14,13 +15,7 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool)
 
 	this->y = y;
 
-	this->vao = vao;
-
-	this->vaoIndex = vaoIndex;
-
-	insideViewFrustum = true;
-
-	numBlocks = numBlocksRendered = 0;
+	this->manager = manager;
 
 	// Chunk starts out by waiting for generation
 	state = WAITING_FOR_GENERATE;
@@ -36,17 +31,15 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool)
 
 }
 
-Chunk::Chunk(int x, int y, ChunkThreadPool* pool) {
+Chunk::Chunk(int x, int y, ChunkThreadPool* pool, ChunkManager* manager) {
 
 	this->pool = pool;
 
 	this->x = x;
 
 	this->y = y;
-
-	insideViewFrustum = true;
-
-	numBlocks = numBlocksRendered = 0;
+	
+	this->manager = manager;
 
 	// Chunk starts out by waiting for generation
 	state = WAITING_FOR_GENERATE;
@@ -62,108 +55,27 @@ Chunk::Chunk(int x, int y, ChunkThreadPool* pool) {
 
 }
 
-void Chunk::setVAO(ChunkVAO* vao, int vaoIndex) {
-
-	this->vao = vao;
-
-	this->vaoIndex = vaoIndex;
-
-}
-
-void Chunk::swapBlockIndices(Block* b1, int index1, Block* b2, int index2) {
-
-	glm::vec3 tempTranslation = translations[index1];
-
-	int tempTexture = textures[index1];
-
-	// Swap lightmap indices for each face of blocks
-	for (int i = 0; i < 6; i++) {
-
-		int tempLight = lightMap[i][index1];
-
-		lightMap[i][index1] = lightMap[i][index2];
-
-		lightMap[i][index2] = tempLight;
-
-	}
-
-	translations[index1] = translations[index2];
-
-	textures[index1] = textures[index2];
-
-	translations[index2] = tempTranslation;
-
-	textures[index2] = tempTexture;
-
-	translationBlocks[index1] = b2;
-
-	translationBlocks[index2] = b1;
-
-	if (b1 != NULL) {
-
-		b1->setTranslationIndex(index2);
-
-	}
-
-	if (b2 != NULL) {
-
-		b2->setTranslationIndex(index1);
-
-	}
-
-}
-
-Block* Chunk::blockWithTranslationIndex(int translationIndex) {
-
-	return translationBlocks[translationIndex];
-
-}
-
 void Chunk::generate(WorldGenerator* gen) {
+
+	id = chunksActive;
 
 	// Chunk is considered to be active following generation
 	chunksActive++;
 
-	translations = (glm::vec3*)malloc(sizeof(glm::vec3) * BLOCKS_PER_CHUNK);
-
-	translationBlocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK);
-
-	textures = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
-
 	// This is where the "generation" takes place
-	blocks = gen->getChunkBlocks(x, y);
+	Block** blocks = gen->getChunkBlocks(x, y);
 
-	lightMap = (int**)malloc(sizeof(int*) * 6);
+	manager->setChunkBlocks(blocks, id);
 
-	for (int i = 0; i < 6; i++) {
+	manager->bindChunkBlocks(this, id);
 
-		lightMap[i] = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
-
-	}
-
-	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
-
-		translationBlocks[i] = NULL;
-
-		// Initialize lightmap values to 0 by default
-		for (int j = 0; j < 6; j++) {
-
-			lightMap[j][i] = 0;
-
-		}
-
-		// Bind blocks to their chunk
-		if (blocks[i] != NULL) {
-
-			blocks[i]->setParent(this);
-
-		}
-
-	}
-
+	delete blocks;
+	
 }
 
 void Chunk::updateBlockNeighbors() {
+
+	Block** blocks = manager->getBlocks(id);
 
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 
@@ -394,29 +306,7 @@ void Chunk::updateBlockNeighbors() {
 			// Update block rendering based on neighboring blocks
 			blocks[i]->determineRendering();
 
-			// Create a translation index for this block
-			blocks[i]->setTranslationIndex(numBlocks);
-
-			// Make mapping from translation index to translation vector for use in chunk VAO
-			translations[numBlocks] = glm::vec3(gx, gy, gz);
-
-			// Make mapping from translation index to block for efficient indexing of blocks based on translation indices
-			translationBlocks[numBlocks] = blocks[i];
-
-			// Add texture id to textures array, used by chunk VAO to determine block texture
-			textures[numBlocks] = blocks[i]->getId();
-
-			// Initialize lightmap for this block to 0 by default
-			for (int j = 0; j < 6; j++) {
-
-				lightMap[j][numBlocks] = 0;
-
-			}
-
-			// A new block has been created so numBlocks and numBlocksRendered must be incremented
-			numBlocks++;
-
-			numBlocksRendered++;
+			manager->initBlock(blocks[i]);
 
 		}
 
@@ -425,6 +315,8 @@ void Chunk::updateBlockNeighbors() {
 }
 
 void Chunk::calculateLighting() {
+
+	Block** blocks = manager->getBlocks(id);
 
 	for (int x = 0; x < CHUNK_WIDTH; x++) {
 
@@ -499,20 +391,7 @@ void Chunk::calculateLighting() {
 
 void Chunk::makeLightmap() {
 
-	// Create the physical lightmap for use in chunk VAO
-	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
-
-		if (blocks[i] != NULL) {
-
-			for (int j = 0; j < 6; j++) {
-
-				lightMap[j][blocks[i]->getTranslationIndex()] = blocks[i]->getLightValue(j);
-
-			}
-
-		}
-
-	}
+	manager->makeLightmap(id);
 
 }
 
@@ -530,7 +409,7 @@ void Chunk::bakeNeighbors() {
 
 		neighbors[CHUNK_NEIGHBOR_LEFT]->reorderBlocks();
 
-		neighbors[CHUNK_NEIGHBOR_LEFT]->updateVAO();
+		manager->updateVAO();
 
 	}
 
@@ -538,7 +417,7 @@ void Chunk::bakeNeighbors() {
 
 		neighbors[CHUNK_NEIGHBOR_RIGHT]->reorderBlocks();
 
-		neighbors[CHUNK_NEIGHBOR_RIGHT]->updateVAO();
+		manager->updateVAO();
 
 	}
 
@@ -546,7 +425,7 @@ void Chunk::bakeNeighbors() {
 
 		neighbors[CHUNK_NEIGHBOR_FRONT]->reorderBlocks();
 
-		neighbors[CHUNK_NEIGHBOR_FRONT]->updateVAO();
+		manager->updateVAO();
 
 	}
 
@@ -554,7 +433,7 @@ void Chunk::bakeNeighbors() {
 
 		neighbors[CHUNK_NEIGHBOR_BACK]->reorderBlocks();
 
-		neighbors[CHUNK_NEIGHBOR_BACK]->updateVAO();
+		manager->updateVAO();
 
 	}
 
@@ -569,204 +448,19 @@ void Chunk::setBlock(int globalX, int globalY, int globalZ, Block* block, bool u
 
 	}
 	
-	int localX = globalX - x * CHUNK_WIDTH;
-
-	int localZ = globalZ - y * CHUNK_WIDTH;
-
-	// Check to make sure block is inside chunk bounds
-	if (localX >= 0 && localX < CHUNK_WIDTH && globalY >= 0 && globalY < CHUNK_HEIGHT && localZ >= 0 && localZ < CHUNK_WIDTH) {
-
-		int index = blockCoordsToIndex(localX, globalY, localZ);
-
-		if (blocks[index] == NULL) {
-
-			if (block != NULL) {
-
-				// If block is not NULL and the block at its position does not exist, we'll insert it into the chunk
-				if (freeBlocks.empty()) {
-
-					// If freeBlocks is empty, we'll make a new translation index for this block
-					block->setTranslationIndex(numBlocks);
-
-					blocks[index] = block;
-
-					translations[numBlocks] = glm::vec3(globalX, globalY, globalZ);
-
-					translationBlocks[numBlocks] = block;
-
-					textures[numBlocks] = block->getId();
-
-					// Make sure this block will be rendered
-					if (numBlocks != numBlocksRendered) {
-
-						swapBlockIndices(block, numBlocks, blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
-
-					}
-
-					numBlocksRendered++;
-
-					numBlocks++;
-
-					// Optionally, update VAO to render new block
-					if (update) {
-
-						updateVAO();
-
-					}
-
-				}
-				else {
-
-					// Otherwise retrieve free translation index and use it
-					int freeTranslationIndex = freeBlocks.front();
-
-					freeBlocks.pop();
-
-					block->setTranslationIndex(freeTranslationIndex);
-
-					blocks[index] = block;
-
-					translations[freeTranslationIndex] = glm::vec3(globalX, globalY, globalZ);
-
-					translationBlocks[freeTranslationIndex] = block;
-
-					textures[freeTranslationIndex] = block->getId();
-
-					if (freeTranslationIndex >= numBlocksRendered) {
-
-						swapBlockIndices(block, freeTranslationIndex, blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
-
-						numBlocksRendered++;
-
-					}
-
-					if (update) {
-
-						updateVAO();
-
-					}
-
-				}
-
-			}
-
-		}
-		else {
-
-			if (block != NULL) {
-
-				// If block already exists in the target position, we'll have to delete it and replace it with this block
-				int translationIndex = blocks[index]->getTranslationIndex();
-
-				block->setTranslationIndex(translationIndex);
-
-				delete blocks[index];
-
-				blocks[index] = block;
-
-				translations[translationIndex] = glm::vec3(globalX, globalY, globalZ);
-
-				translationBlocks[translationIndex] = block;
-
-				textures[translationIndex] = block->getId();
-
-				if (block->shouldRenderType()) {
-
-					if (translationIndex >= numBlocksRendered) {
-
-						swapBlockIndices(block, translationIndex, blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
-
-						numBlocksRendered++;
-
-					}
-
-				}
-				else {
-
-					if (translationIndex < numBlocksRendered) {
-
-						swapBlockIndices(block, translationIndex, blockWithTranslationIndex(numBlocksRendered - 1), numBlocksRendered - 1);
-
-						numBlocksRendered--;
-
-					}
-
-				}
-
-				if (update) {
-
-					updateVAO();
-
-				}
-
-			}
-			else {
-				
-				// Finally if block already exists but we're setting it to NULL, we'll simply delete the block in the target position
-				int translationIndex = blocks[index]->getTranslationIndex();
-
-				// This is how free translation indices get created (they're used to avoid having to shift the translation index array, which is an O(n) operation)
-				freeBlocks.push(translationIndex);
-
-				delete blocks[index];
-
-				blocks[index] = NULL;
-
-				// Setting texture to -1 indicates to fragment shader that it should be discarded
-				textures[translationIndex] = -1;
-
-				if (update) {
-
-					vao->updateTextureData(textures, numBlocks);
-
-				}
-
-			}
-
-		}
-
-	}
-	else {
-
-		std::cout << "Error: block not within chunk range" << std::endl;
-
-	}
+	manager->setBlock(this, globalX, globalY, globalZ, block, update);
 
 }
 
 void Chunk::reorderBlocks() {
 
-	int iter = 0;
-
-	// Go through all blocks and bring renderable block translation indices to the portion of the array that is being rendered
-	for (int i = 0; i < numBlocks; i++) {
-
-		Block* b = blockWithTranslationIndex(i);
-
-		if (b != NULL && b->shouldRender()) {
-
-			swapBlockIndices(b, i, blockWithTranslationIndex(iter), iter);
-
-			iter++;
-
-		}
-
-	}
-
-	numBlocksRendered = iter;
+	manager->reorderBlocks(id);
 
 }
 
 void Chunk::reorderBlock(Block* block) {
 
-	// Reorder an individual block by moving its translation index to the portion of the array being rendered
-	if (block->getTranslationIndex() >= numBlocksRendered) {
-
-		swapBlockIndices(block, block->getTranslationIndex(), blockWithTranslationIndex(numBlocksRendered), numBlocksRendered);
-
-		numBlocksRendered++;
-
-	}
+	manager->reorderBlock(block);
 
 }
 
@@ -789,6 +483,8 @@ Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
 
 	}
 
+	Block** blocks = manager->getBlocks(id);
+
 	int localX = globalX - x * CHUNK_WIDTH;
 
 	int localZ = globalZ - y * CHUNK_WIDTH;
@@ -801,12 +497,6 @@ Block* Chunk::getBlock(int globalX, int globalY, int globalZ) {
 	}
 
 	return NULL;
-
-}
-
-void Chunk::updateVAO() {
-
-	shouldUpdateVAO = true;
 
 }
 
@@ -870,12 +560,6 @@ int Chunk::compare(ChunkCoords* other) {
 
 }
 
-void Chunk::updateViewFrustum(ViewFrustum* frustum) {
-
-	insideViewFrustum = frustum->chunkInView(x, y);
-
-}
-
 void Chunk::render() {
 
 	// If the updateLighting flag was set, generate physical lightmap and update VAO to render new lightmap values
@@ -883,45 +567,22 @@ void Chunk::render() {
 
 		makeLightmap();
 
-		updateVAO();
+		manager->updateVAO();
 
 		updateLighting = false;
 
 	}
 
-	// If updating the VAO, set current translation, texture and lightmap data
-	if (shouldUpdateVAO) {
+}
 
-		vao->updateTranslationData(translations, numBlocksRendered);
+ChunkManager* Chunk::getManager() {
 
-		vao->updateTextureData(textures, numBlocksRendered);
-
-		vao->updateLightmapData(lightMap, numBlocksRendered);
-
-		shouldUpdateVAO = false;
-
-	}
-
-	// Only render if inside view frustum
-	if (insideViewFrustum) {
-
-		for (int i = 0; i < 6; i++) {
-
-			vao->bind(i);
-
-			glDrawElementsInstanced(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0, numBlocksRendered);
-
-		}
-
-	}
+	return manager;
 
 }
 
 Chunk::~Chunk()
 {
-
-	// Chunk is no longer active once it is deleted
-	chunksActive--;
 
 	// Erase this chunk's existence from its neighboring chunks
 	if (neighbors[CHUNK_NEIGHBOR_LEFT] != NULL) {
@@ -949,6 +610,8 @@ Chunk::~Chunk()
 	}
 
 	// Erase the existence of any blocks within this chunk from neighboring blocks in adjacent chunks
+	Block** blocks = manager->getBlocks(id);
+
 	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
 
   	if (blocks[i] != NULL) {
@@ -1014,28 +677,15 @@ Chunk::~Chunk()
 
 			neighbors[i]->reorderBlocks();
 
-			neighbors[i]->updateVAO();
+			manager->updateVAO();
 
 		}
 
 	}
 
-	free(blocks);
-
-	free(translations);
-
-	free(translationBlocks);
-
-	free(textures);
-
-	for (int i = 0; i < 6; i++) {
-
-		free(lightMap[i]);
-
-	}
-
-	free(lightMap);
-
 	free(neighbors);
+
+	// Chunk is no longer active once it is deleted
+	chunksActive--;
 
 }

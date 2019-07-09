@@ -37,22 +37,7 @@ void ChunkThread::updateCreationQueue() {
 			chunkManagerMutex->unlock();
 			if (chunksActive < 400) {
 				c->state = Chunk::GENERATING;
-				ChunkVAO* vao;
-				int vaoIndex;
-				chunkManagerMutex->lock();
-				if (!cm->freeVAOs.empty()) {
-					vaoIndex = cm->freeVAOs.front();
-					vao = cm->VAOs[vaoIndex];
-					cm->freeVAOs.pop();
-				}
-				else {
-					vaoIndex = cm->numUsedVAOs;
-					vao = cm->VAOs[vaoIndex];
-					cm->numUsedVAOs++;
-				}
 				WorldGenerator* generator = cm->generator;
-				chunkManagerMutex->unlock();
-				c->setVAO(vao, vaoIndex);
 				c->generate(generator);
 				c->state = Chunk::WAITING_FOR_FINALIZE;
 				chunkMutex->lock();
@@ -88,7 +73,7 @@ void ChunkThread::updateCreationQueue() {
 				c->calculateLighting();
 				c->makeLightmap();
 				c->reorderBlocks();
-				c->updateVAO();
+				c->getManager()->updateVAO();
 				c->bakeNeighbors();
 				c->state = Chunk::RENDERING;
 			}
@@ -132,7 +117,6 @@ void ChunkThread::updateDeletionQueue() {
 			if (!neighborProcessing) {
 				c->state = Chunk::DELETING;
 				chunkManagerMutex->lock();
-				cm->freeVAOs.push(c->vaoIndex);
 				for (int i = 0; i < cm->chunks->size(); i++) {
 					if ((*(cm->chunks))[i] == c) {
 						cm->chunks->erase(cm->chunks->begin() + i);
