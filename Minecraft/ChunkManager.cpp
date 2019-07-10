@@ -12,6 +12,8 @@ ChunkManager::ChunkManager()
 	
 	numBlocks = numBlocksRendered = 0;
 
+	blocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK * CHUNK_CAP);
+
 	translations = (glm::vec3*)malloc(sizeof(glm::vec3) * BLOCKS_PER_CHUNK * CHUNK_CAP);
 
 	translationBlocks = (Block**)malloc(sizeof(Block*) * BLOCKS_PER_CHUNK * CHUNK_CAP);
@@ -22,11 +24,11 @@ ChunkManager::ChunkManager()
 
 	for (int i = 0; i < 6; i++) {
 
-		lightMap[i] = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK);
+		lightMap[i] = (int*)malloc(sizeof(int) * BLOCKS_PER_CHUNK * CHUNK_CAP);
 
 	}
 
-	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
+	for (int i = 0; i < BLOCKS_PER_CHUNK * CHUNK_CAP; i++) {
 
 		translationBlocks[i] = NULL;
 
@@ -88,7 +90,7 @@ void ChunkManager::setChunkBlocks(Block** blocks, int chunkId) {
 
 	for (int i = chunkId * BLOCKS_PER_CHUNK; i < (chunkId + 1) * BLOCKS_PER_CHUNK; i++) {
 
-		this->blocks[i] = blocks[i];
+		this->blocks[i] = blocks[i - chunkId * BLOCKS_PER_CHUNK];
 
 	}
 
@@ -160,24 +162,24 @@ void ChunkManager::initBlock(Block* b) {
 	}
 	
 	// Create a translation index for this block
-	b->setTranslationIndex(numBlocks);
+	b->setTranslationIndex(translationIndex);
 
 	// Make mapping from translation index to translation vector for use in chunk VAO
-	translations[numBlocks] = glm::vec3(b->getX(), b->getY(), b->getZ());
+	translations[translationIndex] = glm::vec3(b->getX(), b->getY(), b->getZ());
 
 	// Make mapping from translation index to block for efficient indexing of blocks based on translation indices
-	translationBlocks[numBlocks] = b;
+	translationBlocks[translationIndex] = b;
 
 	// Add texture id to textures array, used by chunk VAO to determine block texture
-	textures[numBlocks] = b->getId();
+	textures[translationIndex] = b->getId();
 
 	// Initialize lightmap for this block to 0 by default
 	for (int j = 0; j < 6; j++) {
 
-		lightMap[j][numBlocks] = 0;
+		lightMap[j][translationIndex] = 0;
 
 	}
-
+	
 	// A new block has been created so numBlocks and numBlocksRendered must be incremented
 	numBlocks++;
 
@@ -424,6 +426,8 @@ ChunkManager::~ChunkManager()
 	delete generator;
 	
 	delete chunks;
+
+	free(blocks);
 
 	free(translations);
 

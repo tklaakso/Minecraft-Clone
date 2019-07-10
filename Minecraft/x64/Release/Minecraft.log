@@ -7,18 +7,50 @@ c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(29): 
 c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(29): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(34): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\biomeheightmapoverworld.cpp(34): warning C4244: 'return': conversion from 'FN_DECIMAL' to 'int', possible loss of data
+  BiomeMap.cpp
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(13): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(14): warning C4244: '+=': conversion from 'double' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(26): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   Block.cpp
 c:\users\troy\source\repos\minecraft\minecraft\block.cpp(238): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  BlockAir.cpp
+  BlockCactus.cpp
+  BlockCastInfo.cpp
+  BlockCoalOre.cpp
+  BlockDiamondOre.cpp
+  BlockDirt.cpp
+  BlockGoldOre.cpp
+  BlockGrass.cpp
+  BlockGravel.cpp
+  BlockIronOre.cpp
+  BlockLeaf.cpp
+  BlockLeafOrange.cpp
+  BlockLeafRed.cpp
+  BlockLightGrass.cpp
+  BlockLog.cpp
+  BlockMagma.cpp
+  BlockSand.cpp
+  Compiling...
   BlockSandstone.cpp
+  BlockStone.cpp
+  BlockWater.cpp
   Chunk.cpp
   ChunkManager.cpp
   ChunkThread.cpp
   ChunkThreadPool.cpp
 c:\users\troy\source\repos\minecraft\minecraft\chunkthreadpool.cpp(27): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\chunkthreadpool.cpp(64): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  ChunkVAO.cpp
   CompositeStructure.cpp
 c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(61): warning C4244: 'argument': conversion from 'int' to 'FN_DECIMAL', possible loss of data
-  main.cpp
+  Entity.cpp
+  InvisibleBlock.cpp
+  Math.cpp
+c:\users\troy\source\repos\minecraft\minecraft\math.cpp(155): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
   Player.cpp
 c:\users\troy\source\repos\minecraft\minecraft\player.cpp(41): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\player.cpp(42): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
@@ -28,6 +60,11 @@ c:\users\troy\source\repos\minecraft\minecraft\region.cpp(60): warning C4244: 'a
   RegionManager.cpp
   SingularStructure.cpp
   Structure.cpp
+  StructureCactus.cpp
+  StructureFallTree.cpp
+  StructureSandHut.cpp
+  Compiling...
+  StructureTree.cpp
   Util.cpp
 c:\users\troy\source\repos\minecraft\minecraft\util.cpp(33): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\util.cpp(36): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
@@ -42,14 +79,15 @@ c:\users\troy\source\repos\minecraft\minecraft\world.cpp(162): warning C4267: 'a
 c:\users\troy\source\repos\minecraft\minecraft\world.cpp(180): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\world.cpp(192): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\world.cpp(212): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(289): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(320): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(326): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-c:\users\troy\source\repos\minecraft\minecraft\world.cpp(332): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(290): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(321): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(327): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\world.cpp(333): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   WorldGenerator.cpp
+  main.cpp
   Generating code
-  168 of 1627 functions (10.3%) were compiled, the rest were copied from previous compilation.
-    12 functions were new in current compilation
-    33 functions had inline decision re-evaluated but remain unchanged
+  26 of 1630 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    3 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\x64\Release\Minecraft.exe

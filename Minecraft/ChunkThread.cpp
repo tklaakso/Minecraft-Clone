@@ -22,7 +22,6 @@ void ChunkThread::updateCreationQueue() {
 	chunkMutex->lock();
 	if (creationQueue->size() > 0) {
 		Chunk* c = (*creationQueue)[0];
-		//std::cout << "Create state: " << c->state << std::endl;
 		creationQueue->erase(creationQueue->begin());
 		for (int i = 0; i < creationQueue->size(); i++) {
 			if ((*creationQueue)[i]->compare(c) == 0) {

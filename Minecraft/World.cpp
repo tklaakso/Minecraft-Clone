@@ -255,6 +255,7 @@ void World::render() {
 		}
 	}
 	pool->chunkManagerMutex.unlock();
+	cm->render();
 	Camera* cam = player->getCamera();
 	BlockCastInfo info = blockCast(cam->getPosition(), cam->getDirection());
 	selectedBlock = info.block;
@@ -270,7 +271,7 @@ void World::render() {
 }
 
 void World::makeChunk(int x, int y) {
-	if (!chunkExists(x, y)) {
+	if (!chunkExists(x, y) && Chunk::chunksExisting < CHUNK_CAP) {
 		Chunk* c = new Chunk(x, y, pool, cm);
 		pool->createChunk(c);
 	}

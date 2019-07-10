@@ -100,6 +100,8 @@ public:
 
 	ChunkManager* getManager();
 
+	int getId();
+
 public:
 
 	/*
@@ -121,6 +123,8 @@ public:
 	Records the number of chunks existing at any given moment
 	*/
 	static int chunksActive;
+
+	static int chunksExisting;
 
 	/*
 	Integer-coded states of chunk generation

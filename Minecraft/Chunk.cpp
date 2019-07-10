@@ -6,8 +6,12 @@
 
 int Chunk::chunksActive = 0;
 
+int Chunk::chunksExisting = 0;
+
 Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool, ChunkManager* manager)
 {
+
+	chunksExisting++;
 
 	this->pool = pool;
 
@@ -32,6 +36,8 @@ Chunk::Chunk(int x, int y, ChunkVAO* vao, int vaoIndex, ChunkThreadPool* pool, C
 }
 
 Chunk::Chunk(int x, int y, ChunkThreadPool* pool, ChunkManager* manager) {
+
+	chunksExisting++;
 
 	this->pool = pool;
 
@@ -311,6 +317,12 @@ void Chunk::updateBlockNeighbors() {
 		}
 
 	}
+
+}
+
+int Chunk::getId() {
+
+	return id;
 
 }
 
@@ -687,5 +699,7 @@ Chunk::~Chunk()
 
 	// Chunk is no longer active once it is deleted
 	chunksActive--;
+
+	chunksExisting--;
 
 }
