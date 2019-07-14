@@ -312,11 +312,11 @@ void Chunk::updateBlockNeighbors() {
 			// Update block rendering based on neighboring blocks
 			blocks[i]->determineRendering();
 
-			manager->initBlock(blocks[i]);
-
 		}
 
 	}
+
+	manager->initChunk(this);
 
 }
 

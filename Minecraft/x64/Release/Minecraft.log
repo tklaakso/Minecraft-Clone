@@ -86,8 +86,8 @@ c:\users\troy\source\repos\minecraft\minecraft\world.cpp(333): warning C4244: 'i
   WorldGenerator.cpp
   main.cpp
   Generating code
-  26 of 1630 functions ( 1.6%) were compiled, the rest were copied from previous compilation.
+  9 of 1632 functions ( 0.6%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    3 functions had inline decision re-evaluated but remain unchanged
+    0 functions had inline decision re-evaluated but remain unchanged
   Finished generating code
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\x64\Release\Minecraft.exe

@@ -1,5 +1,6 @@
 #include "ChunkManager.h"
 #include "Util.h"
+#include "Input.h"
 
 ChunkManager::ChunkManager()
 {
@@ -39,6 +40,14 @@ ChunkManager::ChunkManager()
 
 		}
 		
+	}
+
+	initializedChunks = (bool*)malloc(sizeof(bool) * CHUNK_CAP);
+
+	for (int i = 0; i < CHUNK_CAP; i++) {
+
+		initializedChunks[i] = false;
+
 	}
 
 }
@@ -93,6 +102,8 @@ void ChunkManager::setChunkBlocks(Block** blocks, int chunkId) {
 		this->blocks[i] = blocks[i - chunkId * BLOCKS_PER_CHUNK];
 
 	}
+
+	int test = 0;
 
 }
 
@@ -149,6 +160,22 @@ Block** ChunkManager::getBlocks(int chunkId) {
 
 }
 
+void ChunkManager::initChunk(Chunk* c) {
+
+	Block** b = getBlocks(c->getId());
+
+	std::cout << "Init " << c->getId() << std::endl;
+
+	initializedChunks[c->getId()] = true;
+
+	for (int i = 0; i < BLOCKS_PER_CHUNK; i++) {
+
+		initBlock(b[i]);
+
+	}
+
+}
+
 void ChunkManager::initBlock(Block* b) {
 
 	int translationIndex = numBlocks;
@@ -158,6 +185,12 @@ void ChunkManager::initBlock(Block* b) {
 		translationIndex = freeBlocks.front();
 
 		freeBlocks.pop();
+
+	}
+	else {
+
+		// A new block has been created so numBlocks must be incremented
+		numBlocks++;
 
 	}
 	
@@ -179,11 +212,6 @@ void ChunkManager::initBlock(Block* b) {
 		lightMap[j][translationIndex] = 0;
 
 	}
-	
-	// A new block has been created so numBlocks and numBlocksRendered must be incremented
-	numBlocks++;
-
-	numBlocksRendered++;
 
 }
 
@@ -354,7 +382,7 @@ void ChunkManager::setBlock(Chunk* c, int globalX, int globalY, int globalZ, Blo
 
 }
 
-void ChunkManager::reorderBlock(Block* block) {
+int ChunkManager::reorderBlock(Block* block) {
 
 	// Reorder an individual block by moving its translation index to the portion of the array being rendered
 	if (block->shouldRender() && block->getTranslationIndex() >= numBlocksRendered) {
@@ -363,6 +391,8 @@ void ChunkManager::reorderBlock(Block* block) {
 
 		numBlocksRendered++;
 
+		return 1;
+
 	}
 	else if (!block->shouldRender() && block->getTranslationIndex() < numBlocksRendered) {
 
@@ -370,18 +400,30 @@ void ChunkManager::reorderBlock(Block* block) {
 
 		numBlocksRendered--;
 
+		return -1;
+
 	}
+
+	return 0;
 
 }
 
 void ChunkManager::reorderBlocks(int chunkId) {
 
-	// Go through all blocks and bring renderable block translation indices to the portion of the array that is being rendered
-	for (int i = chunkId * BLOCKS_PER_CHUNK; i < (chunkId + 1) * BLOCKS_PER_CHUNK; i++) {
+	if (initializedChunks[chunkId]) {
 
-		Block* b = blocks[i];
+		int sum = 0;
 
-		reorderBlock(b);
+		// Go through all blocks and bring renderable block translation indices to the portion of the array that is being rendered
+		for (int i = chunkId * BLOCKS_PER_CHUNK; i < (chunkId + 1) * BLOCKS_PER_CHUNK; i++) {
+
+			Block* b = blocks[i];
+
+			sum += reorderBlock(b);
+
+		}
+
+		std::cout << "Chunk " << chunkId << ": " << sum << std::endl;
 
 	}
 
@@ -394,6 +436,56 @@ void ChunkManager::updateVAO() {
 }
 
 void ChunkManager::render() {
+
+	if (Input::keyClicked(GLFW_KEY_L)) {
+
+		for (int i = whichChunk * BLOCKS_PER_CHUNK; i < (whichChunk + 1) * BLOCKS_PER_CHUNK; i++) {
+
+			if (blocks[i] != NULL && blocks[i]->getParent() != NULL && !blocks[i]->getParent()->blockInChunk(blocks[i]->getX(), blocks[i]->getY(), blocks[i]->getZ())) {
+
+				int test = 0;
+
+			}
+
+		}
+
+		whichChunk = (whichChunk + 1) % CHUNK_CAP;
+
+	}
+
+	if (Input::keyClicked(GLFW_KEY_O)) {
+		
+		numBlocksRendered -= BLOCKS_PER_CHUNK;
+
+		updateVAO();
+
+	}
+
+	if (Input::keyClicked(GLFW_KEY_K)) {
+
+		for (int i = whichChunk * BLOCKS_PER_CHUNK; i < (whichChunk + 1) * BLOCKS_PER_CHUNK; i++) {
+
+			if (blocks[i] != NULL) {
+
+				if (numBlocksRendered > 0) {
+
+					swapBlockIndices(blocks[i], blocks[i]->getTranslationIndex(), translationBlocks[numBlocksRendered - 1], numBlocksRendered - 1);
+
+					numBlocksRendered--;
+
+				}
+
+			}
+
+		}
+
+		std::cout << numBlocksRendered << std::endl;
+
+		updateVAO();
+
+		whichChunk = (whichChunk + 1) % CHUNK_CAP;
+
+	}
 
 	// If updating the VAO, set current translation, texture and lightmap data
 	if (shouldUpdateVAO) {

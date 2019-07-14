@@ -16,7 +16,7 @@ c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(30): warning C4244: 
 c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\biomemap.cpp(33): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
   Block.cpp
-c:\users\troy\source\repos\minecraft\minecraft\block.cpp(246): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+c:\users\troy\source\repos\minecraft\minecraft\block.cpp(238): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
   BlockAir.cpp
   BlockCactus.cpp
   BlockCastInfo.cpp
@@ -47,6 +47,7 @@ c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(26): warning C401
 c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(91): warning C4018: '<': signed/unsigned mismatch
 c:\users\troy\source\repos\minecraft\minecraft\chunkthread.cpp(119): warning C4018: '<': signed/unsigned mismatch
   ChunkThreadPool.cpp
+  ChunkVAO.cpp
   CompositeStructure.cpp
 c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(8): warning C4018: '<': signed/unsigned mismatch
 c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(21): warning C4018: '<': signed/unsigned mismatch
@@ -55,7 +56,10 @@ c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(62): warni
 c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(66): warning C4018: '<': signed/unsigned mismatch
 c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(78): warning C4018: '<': signed/unsigned mismatch
 c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(79): warning C4018: '<': signed/unsigned mismatch
+  Entity.cpp
   InvisibleBlock.cpp
+  Math.cpp
+c:\users\troy\source\repos\minecraft\minecraft\math.cpp(155): warning C4244: 'return': conversion from 'int' to 'float', possible loss of data
   Player.cpp
 c:\users\troy\source\repos\minecraft\minecraft\player.cpp(41): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\player.cpp(42): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
@@ -81,6 +85,9 @@ c:\users\troy\source\repos\minecraft\minecraft\singularstructure.cpp(67): warnin
   StructureCactus.cpp
   StructureFallTree.cpp
   StructureSandHut.cpp
+  Generating Code...
+c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(74): warning C4715: 'Structure::CompositeStructure::generate': not all control paths return a value
+  Compiling...
   StructureTree.cpp
   Util.cpp
 c:\users\troy\source\repos\minecraft\minecraft\util.cpp(133): warning C4244: 'return': conversion from 'float' to 'int', possible loss of data
@@ -92,12 +99,9 @@ c:\users\troy\source\repos\minecraft\minecraft\world.cpp(252): warning C4018: '<
 c:\users\troy\source\repos\minecraft\minecraft\world.cpp(321): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\world.cpp(327): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 c:\users\troy\source\repos\minecraft\minecraft\world.cpp(333): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
-c:\users\troy\source\repos\minecraft\minecraft\util.cpp(194): warning C4715: 'getOppositeNeighbor': not all control paths return a value
-c:\users\troy\source\repos\minecraft\minecraft\compositestructure.cpp(74): warning C4715: 'Structure::CompositeStructure::generate': not all control paths return a value
-  Compiling...
   WorldGenerator.cpp
 c:\users\troy\source\repos\minecraft\minecraft\worldgenerator.cpp(43): warning C4018: '<': signed/unsigned mismatch
   main.cpp
   Generating Code...
+c:\users\troy\source\repos\minecraft\minecraft\util.cpp(194): warning C4715: 'getOppositeNeighbor': not all control paths return a value
   Minecraft.vcxproj -> C:\Users\Troy\source\repos\Minecraft\Debug\Minecraft.exe

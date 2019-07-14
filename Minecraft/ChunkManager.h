@@ -70,17 +70,23 @@ public:
 
 	Block** getBlocks(int chunkId);
 
+	void initChunk(Chunk* c);
+
 	void initBlock(Block* b);
 
 	void setBlock(Chunk* c, int globalX, int globalY, int globalZ, Block* block, bool update);
 
-	void reorderBlock(Block* block);
+	int reorderBlock(Block* block);
 
 	void reorderBlocks(int chunkId);
 
 	void updateVAO();
 
 	void render();
+
+	bool* initializedChunks;
+
+	int whichChunk = 0;
 
 };
 
